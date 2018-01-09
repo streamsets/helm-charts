@@ -1,0 +1,12 @@
+# Default values for Streamsets Control Agent
+image:
+  repository: streamsets/control-agent
+  tag: 3.0.0
+  pullPolicy: IfNotPresent
+streamsets:
+  orgId:
+  api:
+    url: https://cloud.streamsets.com
+    token:
+rbac:
+  enabled: true

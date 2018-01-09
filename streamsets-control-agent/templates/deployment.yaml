@@ -1,0 +1,61 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+    spec:
+      {{- if .Values.rbac.enabled }}
+      serviceAccountName: {{ template "fullname" . }}
+      {{- else }}
+      serviceAccountName: default
+      {{- end }}
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: {{ template "fullname" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.resources }}
+          resources:
+          {{ toYaml .Values.resources | indent 12 }}
+          {{- end }}
+          env:
+          - name: HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: dpm_agent_master_url
+            value: "https://kubernetes.default.svc.cluster.local"
+          - name: dpm_agent_cof_type
+            value: KUBERNETES
+          - name: dpm_agent_dpm_baseurl
+            value: {{ default "https://cloud.streamsets.com" .Values.streamsets.api.url }}
+          - name: dpm_agent_component_id
+            value: {{ .Release.Name }}
+          - name: dpm_agent_token_string
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "fullname" . }}-credentials
+                key: apiToken
+          - name: dpm_agent_name
+            value: {{ .Release.Name }}
+          - name: dpm_agent_orgId
+            value: {{required "An SCH orgId is required!" .Values.streamsets.orgId }}
+          - name: dpm_agent_secret
+            value: {{ template "fullname" . }}-credentials
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+      {{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}

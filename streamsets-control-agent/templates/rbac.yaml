@@ -1,0 +1,34 @@
+{{- if .Values.rbac.enabled }}
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: {{ template "fullname" . }}
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ template "fullname" . }}
+rules:
+- apiGroups: ["", "extensions"]
+  resources: ["pods", "deployments", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["{{ template "fullname" . }}-credentials"]
+  verbs: ["get", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: {{ template "fullname" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "fullname" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
