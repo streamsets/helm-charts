@@ -4,9 +4,9 @@ image:
   tag: 3.0.0
   pullPolicy: IfNotPresent
 streamsets:
-  orgId:
+  orgId: <your SCH organization name>
   api:
     url: https://cloud.streamsets.com
-    token:
+    token: <control agent token from SCH>
 rbac:
   enabled: true
