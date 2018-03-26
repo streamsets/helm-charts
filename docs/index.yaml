@@ -1,0 +1,25 @@
+apiVersion: v1
+entries:
+  streamsets-control-agent:
+  - apiVersion: v1
+    appVersion: 3.1.0
+    created: 2018-03-26T16:47:17.965635653-07:00
+    description: Control Agent for managing StreamSets Control Hub Deployments
+    digest: 11a25056949e1f9b943c382a97168ac582350fe7d4a7b730e02d6b9859c2db1a
+    engine: gotpl
+    home: https://streamsets.com
+    icon: https://streamsets.com/wp-content/uploads/2016/08/StreamSets-logo-small.png
+    keywords:
+    - streamsets
+    - sdc
+    - sch
+    maintainers:
+    - email: adam@streamsets.com
+      name: Adam Kunicki
+    name: streamsets-control-agent
+    sources:
+    - https://hub.docker.com/r/streamsets/control-agent/
+    urls:
+    - streamsets-control-agent-1.0.0.tgz
+    version: 1.0.0
+generated: 2018-03-26T16:47:17.965082833-07:00
