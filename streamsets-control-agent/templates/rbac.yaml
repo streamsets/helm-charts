@@ -10,8 +10,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   name: {{ template "fullname" . }}
 rules:
-- apiGroups: ["", "extensions"]
-  resources: ["pods", "deployments", "replicasets"]
+- apiGroups: ["", "extensions", "autoscaling"]
+  resources: ["pods", "deployments", "replicasets", "horizontalpodautoscalers", "services", "ingresses"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 - apiGroups: [""]
   resources: ["secrets"]
