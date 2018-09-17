@@ -1,0 +1,39 @@
+{{- if .Values.istio.enabled }}
+{{- $serviceName := include "fullname" . -}}
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    namespace: {{ .Release.Namespace }}
+spec:
+  targets:
+  {{- range $app := .Values.apps }}
+  - name: "{{ $serviceName }}-{{ $app.name | replace "_" "-" }}"
+  {{- end }}
+  peers:
+  - mtls:
+      mode: {{ .Values.istio.mTLS }}
+---
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
+metadata:
+  name: "{{ template "fullname" . }}-db"
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    namespace: {{ .Release.Namespace }}
+spec:
+  targets:
+  - name: "{{ .Release.Name }}-influxdb"
+  - name: "{{ .Release.Name }}-mysql"
+  peers:
+  - mtls:
+      mode: {{ .Values.istio.mTLS }}
+{{- end }}

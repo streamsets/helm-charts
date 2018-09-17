@@ -1,0 +1,180 @@
+# Default values for Control Hub
+image:
+  repository: streamsets/control-hub
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 18631
+  adminPort: 18632
+ingress:
+  enabled: true
+  proto: https
+  # Used to create an Ingress record.
+  domain: example.com
+  host: streamsets
+  annotations:
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # ingress.kubernetes.io/rewrite-target: /
+    # kubernetes.io/ingress.allow-http: "true"
+    # kubernetes.io/ingress.class: traefik
+istio:
+  # set to true to use configure Istio Gateway + VirtualService instead of Ingress
+  # requires that the target namespace has automatic sidecar injection enabled
+  enabled: false
+  mTLS: PERMISSIVE
+
+##
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources: {}
+
+##
+## Control Hub Configuration
+##
+common:
+  env: &COMMON_ENV
+    DPM_CONF_MAIL_TRANSPORT_PROTOCOL: smtp
+    DPM_CONF_MAIL_SMTP_HOST:
+    DPM_CONF_MAIL_SMTP_PORT: 587
+    DPM_CONF_MAIL_SMTP_STARTTLS_ENABLE: true
+    DPM_CONF_MAIL_SMTP_AUTH: true
+    DPM_CONF_MAIL_SMTPS_HOST:
+    DPM_CONF_MAIL_SMTPS_PORT: 465
+    DPM_CONF_MAIL_SMTPS_AUTH: true
+    DPM_CONF_XMAIL_USERNAME:
+    DPM_CONF_XMAIL_PASSWORD:
+    DPM_CONF_XMAIL_FROM_ADDRESS:
+
+appProto: http
+apps:
+  - name: security
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: pipelinestore
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: messaging
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: jobrunner
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: timeseries
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: topology
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: notification
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: sla
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: policy
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: provisioning
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: scheduler
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: sdp_classification
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: reporting
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+
+adminPassword: # default is random password
+schInfluxUser: streamsets
+schInfluxPassword: # default is random password
+
+##
+## MySQL chart configuration
+##
+mysql:
+  enabled: true
+  mysqlRootPassword: # default is random password -- you cannot currently scale when using random
+  mysqlUser: streamsets
+  mysqlPassword: # default is random password
+  persistence:
+    enabled: true
+    # storageClass: "-"
+    accessMode: ReadWriteOnce
+    size: 8Gi
+  ## Configure resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+  configurationFiles:
+    mysql_dpm.cnf: |-
+      [mysqld]
+      character-set-server=utf8
+      collation-server=utf8_general_ci
+      lower_case_table_names=0
+  initializationFiles:
+    create-schemas.sql: |-
+      CREATE DATABASE IF NOT EXISTS security;
+      CREATE DATABASE IF NOT EXISTS pipelinestore;
+      CREATE DATABASE IF NOT EXISTS messaging;
+      CREATE DATABASE IF NOT EXISTS jobrunner;
+      CREATE DATABASE IF NOT EXISTS topology;
+      CREATE DATABASE IF NOT EXISTS notification;
+      CREATE DATABASE IF NOT EXISTS sla;
+      CREATE DATABASE IF NOT EXISTS timeseries;
+      CREATE DATABASE IF NOT EXISTS policy;
+      CREATE DATABASE IF NOT EXISTS provisioning;
+      CREATE DATABASE IF NOT EXISTS reporting;
+      CREATE DATABASE IF NOT EXISTS scheduler;
+      CREATE DATABASE IF NOT EXISTS sdp_classification;
+  ssl:
+    enabled: false
+##
+## InfluxDB chart configuration
+##
+influxdb:
+  proto: http
+  enabled: true
+  image:
+    tag: "1.3"
+  persistence:
+    enabled: true
+    size: 8Gi
+  config:
+    reporting_disabled: true
+    http:
+      bind_address: 8086

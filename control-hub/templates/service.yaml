@@ -1,0 +1,26 @@
+{{- range $app := .Values.apps }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ template "fullname" $ }}-{{ $app.name | replace "_" "-" }}"
+  labels:
+    app: {{ $app.name | quote }}
+    chart: {{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}
+    release: {{ $.Release.Name }}
+    heritage: {{ $.Release.Service }}
+    namespace: {{ $.Release.Namespace }}
+spec:
+  type: {{ $.Values.service.type }}
+  ports:
+  - name: http
+    port: {{ $.Values.service.port }}
+    targetPort: {{ $.Values.service.port }}
+    protocol: TCP
+  - name: http-admin
+    port: {{ $.Values.service.adminPort }}
+    targetPort: {{ $.Values.service.adminPort }}
+    protocol: TCP
+  selector:
+    app: {{ $app.name | quote }}
+{{- end }}

@@ -1,0 +1,39 @@
+{{- if (.Values.ingress.enabled) and not .Values.ingress.istio -}}
+{{- $serviceName := include "fullname" . -}}
+{{- $servicePort := .Values.service.port -}}
+{{- $adminPort := .Values.service.adminPort -}}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- range $key, $value := .Values.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.host }}.{{ .Values.ingress.domain }}
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: "{{ $serviceName }}-security" # security app can host UI for now
+            servicePort: {{ $servicePort }}
+        {{- range $app := .Values.apps }}
+        - path: "/{{ $app.name }}"
+          backend:
+            serviceName: "{{ $serviceName }}-{{ $app.name | replace "_" "-" }}"
+            servicePort: {{ $servicePort }}
+        {{- end }}
+        - path: /adminApp
+          backend:
+            serviceName: "{{ $serviceName }}-security"
+            servicePort: {{ $adminPort }}
+{{- end -}}

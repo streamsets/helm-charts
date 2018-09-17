@@ -1,0 +1,7 @@
+Control Hub will be available at the following URL:
+
+{{- if eq .Values.ingress.domain "minikube.local" }}
+Control Hub       - {{ .Values.ingress.proto }}://{{ .Values.ingress.host }}.{{ .Values.ingress.domain }}:31380
+{{- else }}
+Control Hub       - {{ .Values.ingress.proto }}://{{ .Values.ingress.host }}.{{ .Values.ingress.domain }}
+{{- end }}

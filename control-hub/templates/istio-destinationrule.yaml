@@ -1,0 +1,59 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ template "influxdb.fullname" . }}
+  labels:
+    app: influxdb
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    namespace: {{ .Release.Namespace }}
+spec:
+  host: "{{ .Release.Name }}-influxdb.{{ .Release.Namespace }}.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      {{- if eq .Values.istio.mTLS "DISABLE" }}
+      mode: DISABLE
+      {{ else }}
+      mode: ISTIO_MUTUAL
+      {{- end }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: "{{ template "fullname" . }}-mysql"
+  labels:
+    app: mysql
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    namespace: {{ .Release.Namespace }}
+spec:
+  host: "{{ .Release.Name }}-mysql.{{ .Release.Namespace }}.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+{{- range $app := .Values.apps }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: "{{ template "fullname" $ }}-{{ $app.name | replace "_" "-" }}"
+  labels:
+    app: {{ $app.name | quote }}
+    chart: {{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}
+    release: {{ $.Release.Name }}
+    heritage: {{ $.Release.Service }}
+    namespace: {{ $.Release.Namespace }}
+spec:
+  host: "{{ template "fullname" $ }}-{{ $app.name | replace "_" "-" }}.{{ $.Release.Namespace }}.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      {{- if eq $.Values.istio.mTLS "DISABLE" }}
+      mode: DISABLE
+      {{ else }}
+      mode: ISTIO_MUTUAL
+      {{- end }}
+{{- end }}
+{{- end }}

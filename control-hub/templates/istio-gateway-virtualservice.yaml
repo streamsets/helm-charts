@@ -1,0 +1,81 @@
+{{- if .Values.istio.enabled -}}
+{{- $serviceName := include "fullname" . -}}
+{{- $servicePort := .Values.service.port -}}
+{{- $adminPort := .Values.service.adminPort -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    {{- if eq .Values.ingress.proto "https" }}
+    tls:
+      httpsRedirect: true
+    {{- end }}
+    hosts:
+    - "{{ .Values.ingress.host }}.{{ .Values.ingress.domain }}"
+  {{- if eq .Values.ingress.proto "https" }}
+  - hosts:
+    - "{{ .Values.ingress.host }}.{{ .Values.ingress.domain }}"
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      privateKey: /etc/istio/ingressgateway-certs/tls.key
+      serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+  {{- end }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ template "fullname" . }}
+spec:
+  hosts:
+  {{- if eq .Values.ingress.domain "minikube.local" }}
+  - "*"
+  {{- else }}
+  - "{{ .Values.ingress.host }}.{{ .Values.ingress.domain }}"
+  {{- end }}
+  gateways:
+  - {{ template "fullname" . }}
+  http:
+  {{- range $app := .Values.apps }}
+  - match:
+    - uri:
+        prefix: "/{{ $app.name }}"
+    route:
+    - destination:
+        port:
+          number: {{ $servicePort }}
+        host: "{{ $serviceName }}-{{ $app.name | replace "_" "-" }}.{{ $.Release.Namespace }}.svc.cluster.local"
+  {{- end }}
+  - match:
+    - uri:
+        prefix: /adminApp
+    - uri:
+        prefix: /rest/v1/system
+    route:
+    - destination:
+        port:
+          number: {{ $adminPort }}
+        host: "{{ $serviceName }}-security.{{ .Release.Namespace }}.svc.cluster.local"
+  - route:
+    - destination:
+        port:
+          number: 18631
+        host: "{{ $serviceName }}-security.{{ .Release.Namespace }}.svc.cluster.local"
+{{- end -}}

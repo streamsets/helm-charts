@@ -24,6 +24,7 @@ pipeline {
     stage('lint') {
       steps {
         sh 'helm lint streamsets-control-agent'
+        sh 'helm lint control-hub'
       }
     }
   }
