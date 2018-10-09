@@ -53,7 +53,7 @@ spec:
           runAsUser: 500
         env:
         - name: DPM_CONF_APPS_TO_START
-          value: "{{ $app.name }} security"
+          value: "{{ $app.name }}"
         - name: DB_USER
           value: "root"
         - name: DB_PASSWORD
