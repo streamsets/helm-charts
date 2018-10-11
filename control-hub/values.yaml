@@ -3,6 +3,7 @@ image:
   repository: streamsets/control-hub
   tag: latest
   pullPolicy: IfNotPresent
+  dev: false # set to true if deploying developer builds rather than production builds
 service:
   type: ClusterIP
   port: 18631
