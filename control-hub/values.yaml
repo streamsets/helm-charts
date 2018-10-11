@@ -52,66 +52,107 @@ common:
 appProto: http
 apps:
   - name: security
+    deployment: security
+  - name: pipelinestore
+    deployment: pipelinestore
+  - name: messaging
+    deployment: messaging
+  - name: jobrunner
+    deployment: jobrunner
+  - name: timeseries
+    deployment: timeseries
+  - name: topology
+    deployment: topology
+  - name: notification
+    deployment: notification
+  - name: sla
+    deployment: sla
+  - name: policy
+    deployment: policy
+  - name: provisioning
+    deployment: provisioning
+  - name: scheduler
+    deployment: scheduler
+  - name: sdp_classification
+    deployment: sdp_classification
+  - name: reporting
+    deployment: reporting
+
+deployments:
+  - name: security
+    appsToStart: "security"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: pipelinestore
+    appsToStart: "pipelinestore"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: messaging
+    appsToStart: "messaging"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: jobrunner
+    appsToStart: "jobrunner"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: timeseries
+    appsToStart: "timeseries"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: topology
+    appsToStart: "topology"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: notification
+    appsToStart: "notification"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: sla
+    appsToStart: "sla"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: policy
+    appsToStart: "policy"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: provisioning
+    appsToStart: "provisioning"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: scheduler
+    appsToStart: "scheduler"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: sdp_classification
+    appsToStart: "sdp_classification"
     replicaCount: 1
     container:
       env:
         <<: *COMMON_ENV
   - name: reporting
+    appsToStart: "reporting"
     replicaCount: 1
     container:
       env:

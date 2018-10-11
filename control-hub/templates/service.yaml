@@ -22,5 +22,5 @@ spec:
     targetPort: {{ $.Values.service.adminPort }}
     protocol: TCP
   selector:
-    app: {{ $app.name | quote }}
+    deployment: {{ $app.deployment | quote }}
 {{- end }}

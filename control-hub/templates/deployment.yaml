@@ -1,22 +1,22 @@
 {{- $externalPort := include "externalPort" . }}
-{{- range $app := .Values.apps }}
+{{- range $deployment := .Values.deployments }}
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: "{{ template "fullname" $ }}-{{ $app.name | replace "_" "-" }}"
+  name: "{{ template "fullname" $ }}-{{ $deployment.name | replace "_" "-" }}"
   labels:
-    app: {{ $app.name | quote }}
+    deployment: {{ $deployment.name | quote }}
     chart: {{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}
     release: {{ $.Release.Name }}
     heritage: {{ $.Release.Service }}
     namespace: {{ $.Release.Namespace }}
 spec:
-  replicas: {{ $app.replicaCount }}
+  replicas: {{ $deployment.replicaCount }}
   template:
     metadata:
       labels:
-        app: {{ $app.name | quote }}
+        deployment: {{ $deployment.name | quote }}
         release: {{ $.Release.Name }}
     spec:
       initContainers:
@@ -42,21 +42,21 @@ spec:
           securityContext:
             capabilities:
               add: ["SYS_ADMIN"]
-        - name: {{ $app.name | replace "_" "-" }}
+        - name: {{ $deployment.name | replace "_" "-" }}
           image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           securityContext:
             runAsNonRoot: true
             runAsUser: 500
           env:
-          {{- range $key, $val := $app.container.env }}
+          {{- range $key, $val := $deployment.container.env }}
           - name: {{ $key }}
             value: {{ $val | quote }}
           {{- end }}
           - name: INIT_SECURITY
             value: "true"
           - name: DPM_CONF_APPS_TO_START
-            value: {{ $app.name }}
+            value: {{ $deployment.appsToStart }}
           {{- range $app := $.Values.apps }}
           - name: "DPM_CONF_DPM_APP_{{ $app.name | upper }}_URL"
             value: "{{ $.Values.appProto }}://{{ template "fullname" $ }}-{{ $app.name | replace "_" "-" }}.{{ $.Release.Namespace }}.svc.cluster.local:{{ $.Values.service.port }}"
