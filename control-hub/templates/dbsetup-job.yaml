@@ -65,6 +65,17 @@ spec:
           value: "{{ template "mysql.fullname" $ }}.{{ $.Release.Namespace }}.svc.cluster.local"
         - name: DB_PORT
           value: "3306"
+        - name: DPM_CONF_DB_URL
+          value: "{{ $.Values.influxdb.proto }}://{{ template "influxdb.fullname" $ }}.{{ $.Release.Namespace }}.svc.cluster.local:{{ $.Values.influxdb.config.http.bind_address }}"
+        - name: DPM_CONF_DB_NAME
+          value: "dpm"
+        - name: DPM_CONF_DB_USER
+          value: {{ $.Values.schInfluxUser }}
+        - name: DPM_CONF_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: "{{ template "fullname" $ }}"
+              key: influxdb-password
 {{- end }}
 ---
 apiVersion: batch/v1
