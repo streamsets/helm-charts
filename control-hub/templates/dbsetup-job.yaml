@@ -43,6 +43,10 @@ spec:
         - name: DB_PORT
           value: "3306"
         command: ['sh', '-c', 'mysql -w --connect-timeout=5 -s -N -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT USER()"']
+      {{- if $.Values.image.pullSecret }}
+      imagePullSecrets:
+      - name: "{{ $.Values.image.pullSecret }}"
+      {{- end }}
       containers:
       - name: post-install-db-setup
         image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
@@ -274,6 +278,10 @@ spec:
         - name: DB_PORT
           value: "3306"
         command: ['sh', '-c', 'mysql -w --connect-timeout=5 -s -N -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT USER()"']
+      {{- if $.Values.image.pullSecret }}
+      imagePullSecrets:
+      - name: "{{ $.Values.image.pullSecret }}"
+      {{- end }}
       containers:
       - name: post-install-db-setup
         image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
