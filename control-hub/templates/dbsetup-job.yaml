@@ -26,7 +26,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
-      restartPolicy: OnFailure
+      restartPolicy: Never
       initContainers:
       - name: mysql-ready
         image: mysql
@@ -106,7 +106,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
-      restartPolicy: OnFailure
+      restartPolicy: Never
       containers:
       - name: post-install-influx-setup
         image: appropriate/curl:latest
@@ -156,7 +156,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
-      restartPolicy: OnFailure
+      restartPolicy: Never
       containers:
       - name: post-install-influx-setup-db
         image: appropriate/curl:latest
@@ -209,7 +209,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
-      restartPolicy: OnFailure
+      restartPolicy: Never
       containers:
       - name: post-install-influx-setup-app-db
         image: appropriate/curl:latest
