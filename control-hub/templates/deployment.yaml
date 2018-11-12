@@ -105,6 +105,8 @@ spec:
               secretKeyRef:
                 name: "{{ template "fullname" $ }}"
                 key: admin-password
+          - name: DPM_CONF_PIPELINE_DESIGNER_SYSTEM_SDC_URL
+            value: {{ $.Values.systemDCUrl }}
           ports:
           - name: http
             containerPort: {{ $.Values.service.port }}
@@ -133,3 +135,34 @@ spec:
 {{ toYaml $.Values.nodeSelector | indent 8 }}
     {{- end }}
 {{- end }}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: system-dc
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app : system-dc
+    spec:
+      containers:
+      - name : datacollector
+        image: streamsets/datacollector:3.6.0-SNAPSHOT
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 18630
+        readinessProbe:
+          httpGet:
+            path: /public-rest/ping
+            port: 18630
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 100m
+          limits:
+            cpu: 100m
+            memory: 512Mi

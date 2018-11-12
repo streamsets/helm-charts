@@ -24,3 +24,16 @@ spec:
   selector:
     deployment: {{ $app.deployment | quote }}
 {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: system-dc
+spec:
+  ports:
+  - name: http
+    port: 18630
+    targetPort: 18630
+    protocol: TCP
+  selector:
+    app: system-dc

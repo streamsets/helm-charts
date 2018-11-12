@@ -27,6 +27,7 @@ istio:
   enabled: false
   mTLS: PERMISSIVE
 
+systemDCUrl: http://system-dc.default.svc.cluster.local:18630
 ##
 ## Configure resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
