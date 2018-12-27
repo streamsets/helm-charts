@@ -28,9 +28,9 @@ For minikube support, we expect you to use the domain minikube.local and
 set up a few workaounds for lack of LoadBalancer support.
 */}}
 {{- define "externalPort" }}
-{{- if (eq .Values.ingress.domain "minikube.local") and eq .Values.ingress.proto "http" }}
+{{- if (and (and (eq .Values.ingress.domain "minikube.local") (eq .Values.ingress.proto "http")) .Values.istio.enabled) }}
 {{- printf ":31380" -}}
-{{- else if (eq .Values.ingress.domain "minikube.local") and eq .Values.ingress.proto "https" }}
+{{- else if (and (and (eq .Values.ingress.domain "minikube.local") (eq .Values.ingress.proto "https")) .Values.istio.enabled) }}
 {{- printf ":31390" -}}
 {{- end }}
 {{- end }}
