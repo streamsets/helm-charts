@@ -54,7 +54,6 @@ spec:
         args: ["dpmcli", "{{ $app.name }}", "buildSchema", "-u", "--debug"]
         securityContext:
           runAsNonRoot: true
-          runAsUser: 500
         env:
         - name: DPM_CONF_APPS_TO_START
           value: "{{ $app.name }}"

@@ -51,7 +51,6 @@ spec:
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           securityContext:
             runAsNonRoot: true
-            runAsUser: 500
           env:
           {{- range $key, $val := $deployment.container.env }}
           - name: {{ $key }}
