@@ -1,0 +1,94 @@
+{{ if .Values.systemDataCollector.enabled }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "{{ template "fullname" . }}-system-dc"
+  chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+  release: {{ .Release.Name }}
+  heritage: {{ .Release.Service }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: system-dc
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: datacollector
+        image: "{{ .Values.systemDataCollector.image.repository }}:{{ .Values.systemDataCollector.image.tag }}"
+        imagePullPolicy: {{ .Values.systemDataCollector.image.pullPolicy }}
+        ports:
+        - containerPort: 18630
+        readinessProbe:
+          httpGet:
+            path: /public-rest/ping
+            port: 18630
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+{{ toYaml .Values.systemDataCollector.resources | indent 12 }}
+    {{- if .Values.systemDataCollector.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.systemDataCollector.nodeSelector | indent 8 }}
+    {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ template "fullname" $ }}-system-dc"
+  labels:
+    app: system-dc
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: http
+    port: 18630
+    targetPort: 18630
+    protocol: TCP
+  selector:
+    app: system-dc
+{{- if .Values.istio.enabled }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: "system-dc"
+  labels:
+    app: system-dc
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    namespace: {{ .Release.Namespace }}
+spec:
+  host: "{{ .Release.Name }}-system-dc.{{ .Release.Namespace }}.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      {{- if eq .Values.istio.mTLS "DISABLE" }}
+      mode: DISABLE
+      {{ else }}
+      mode: ISTIO_MUTUAL
+      {{- end }}
+---
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
+metadata:
+  name: "{{ template "fullname" . }}-system-dc"
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    namespace: {{ .Release.Namespace }}
+spec:
+  targets:
+  - name: "{{ .Release.Name }}-system-dc"
+  peers:
+  - mtls:
+      mode: {{ .Values.istio.mTLS }}
+{{- end }}
+{{- end }}

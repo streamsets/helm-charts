@@ -38,9 +38,15 @@ The following tables lists the configurable parameters of the chart and their de
 | `istio.enabled`                      | When set to true, will create Istio Gateway/Virtual Service resources instead of Ingress.  |
 | `istio.mTLS`                         | Sets the Istio authentication policy to either PERMISSIVE/ISTIO_MUTUAL, or DISABLE         |
 | `resources`                          | Resource request for the pods                                                              | None                                                                               |
+| `nodeSelector`                          | Node selector for the pods                                                              | None                                                                               |
+| `systemDataCollector.enabled` | Whether to install a system Data Collector | true |
+| `systemDataCollector.image.repository`                   | Control Hub image name                                                                     | `streamsets/datacollector`                                                           |
+| `systemDataCollector.image.tag`                          | The version of the official image to use                                                   | `latest`                                                                           |
+| `systemDataCollector.image.pullPolicy`                   | Pull policy for the image                                                                  | `IfNotPresent`                                                                     |
+| `systemDataCollector.resources`                          | Resource request for the pods                                                              | None                                                                               |
+| `systemDataCollector.nodeSelector`                          | Node selector for the pods                                                              | None                                                                               |
 | `common.env`                         | Environment to set for all app pods                                                        | None                                                                               |
 | `appProto`                           | Scheme for app-to-app communication. `http` or `https`.                                    | http                                                                               |
-||
 | `apps`                               | List of app services and their associated `group`              |  |
 | `apps.name`                          | Name of service for app              |  |
 | `apps.deployment`                    | Deployment name for service found in `deployments`   | `apps.name` |
@@ -153,7 +159,7 @@ _Note: Dynamic scaling is not supported with random passwords_
      deployment: one
    - name: reporting
      deployment: one
- 
+
    mysql:
      imageTag: 5.7
      mysqlRootPassword: streamSets123

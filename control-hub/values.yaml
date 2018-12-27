@@ -27,12 +27,21 @@ istio:
   enabled: false
   mTLS: PERMISSIVE
 
-systemDCUrl: http://system-dc.default.svc.cluster.local:18630
+systemDataCollector:
+  enabled: true
+  image:
+    repository: streamsets/datacollector
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources: {}
+  nodeSelector: {}
+
 ##
 ## Configure resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
 resources: {}
+nodeSelector: {}
 
 ##
 ## Control Hub Configuration
