@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{$.Release.Name}}-init-{{ $app.name | replace "_" "-" }}-db"
+  name: "{{$.Release.Name}}-init-{{ $app.name | replace "_" "-" }}-db-{{ $.Values.image.tag }}"
   labels:
     heritage: {{$.Release.Service | quote }}
     release: {{$.Release.Name | quote }}
@@ -11,7 +11,7 @@ metadata:
   annotations:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
-    "helm.sh/hook": post-install
+    "helm.sh/hook": post-install, pre-upgrade
     "helm.sh/hook-weight": "-5"
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
@@ -51,7 +51,7 @@ spec:
       - name: post-install-db-setup
         image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
         imagePullPolicy: {{ $.Values.image.pullPolicy }}
-        args: ["dpmcli", "{{ $app.name }}", "buildSchema", "--debug"]
+        args: ["dpmcli", "{{ $app.name }}", "buildSchema", "-a", "--debug"]
         securityContext:
           runAsNonRoot: true
         env:
@@ -82,7 +82,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{.Release.Name}}-influx-setup-user"
+  name: "{{.Release.Name}}-influx-setup-user-{{ $.Values.image.tag }}"
   labels:
     heritage: {{.Release.Service | quote }}
     release: {{.Release.Name | quote }}
@@ -131,7 +131,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{.Release.Name}}-influx-setup-db"
+  name: "{{.Release.Name}}-influx-setup-db-{{ $.Values.image.tag }}"
   labels:
     heritage: {{.Release.Service | quote }}
     release: {{.Release.Name | quote }}
@@ -183,7 +183,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{.Release.Name}}-influx-setup-app-db"
+  name: "{{.Release.Name}}-influx-setup-app-db-{{ $.Values.image.tag }}"
   labels:
     heritage: {{.Release.Service | quote }}
     release: {{.Release.Name | quote }}
@@ -234,7 +234,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{$.Release.Name}}-init-system-id"
+  name: "{{$.Release.Name}}-init-system-id-{{ $.Values.image.tag }}"
   labels:
     heritage: {{$.Release.Service | quote }}
     release: {{$.Release.Name | quote }}
