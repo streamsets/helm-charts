@@ -3,8 +3,8 @@ image:
   repository: streamsets/control-hub
   tag: latest
   pullPolicy: IfNotPresent
-  pullSecret: # set to a secret name containing any necessary private registry credentials
-  dev: false # set to true if deploying developer builds rather than production builds
+  pullSecret:  # set to a secret name containing any necessary private registry credentials
+  dev: false   # set to true if deploying developer builds rather than production builds
 service:
   type: ClusterIP
   port: 18631
@@ -160,18 +160,18 @@ deployments:
       env:
         <<: *COMMON_ENV
 
-adminPassword: # default is random password
+adminPassword:  # default is random password
 schInfluxUser: streamsets
-schInfluxPassword: # default is random password
+schInfluxPassword:  # default is random password
 
 ##
 ## MySQL chart configuration
 ##
 mysql:
   enabled: true
-  mysqlRootPassword: # default is random password -- you cannot currently scale when using random
+  mysqlRootPassword:  # default is random password -- you cannot currently scale when using random
   mysqlUser: streamsets
-  mysqlPassword: # default is random password
+  mysqlPassword:  # default is random password
   persistence:
     enabled: true
     # storageClass: "-"
