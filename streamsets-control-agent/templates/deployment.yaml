@@ -27,6 +27,12 @@ spec:
         - name: {{ template "fullname" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+	  {{- if .Values.krb.enabled }}
+          volumeMounts:
+          - name: krb5conf
+            mountPath: "/opt/kerberos"
+            readOnly: true
+	  {{- end}}
           {{- if .Values.resources }}
           resources:
           {{ toYaml .Values.resources | indent 12 }}
@@ -43,7 +49,7 @@ spec:
           - name: dpm_agent_dpm_baseurl
             value: {{ default "https://cloud.streamsets.com" .Values.streamsets.api.url }}
           - name: dpm_agent_component_id
-            value: {{ .Release.Name }}
+            value: {{ .Release.Name }}-{{ .Values.streamsets.orgId }}
           - name: dpm_agent_token_string
             valueFrom:
               secretKeyRef:
@@ -55,6 +61,24 @@ spec:
             value: {{required "An SCH orgId is required!" .Values.streamsets.orgId }}
           - name: dpm_agent_secret
             value: {{ template "fullname" . }}-credentials
+          - name: dpm_agent_crd_enabled
+            value: "{{.Values.streamsets.crdEnabled}}"
+	  {{- if .Values.krb.enabled }}
+          - name: dpm_agent_kerberos_enabled
+            value: "true"
+          - name: KRB5_CONFIG
+            value: "/opt/kerberos/krb5.conf"
+          - name: dpm_agent_kerberos_secret
+            value: kerbsecret
+          - name: dpm_agent_kdc_type
+            value: {{ .Values.krb.kdcType }}
+	  {{- end}}
+      {{- if .Values.krb.enabled }}
+      volumes:
+        - name: krb5conf
+          secret:
+            secretName: krb5conf
+      {{- end}}
       {{- if .Values.nodeSelector }}
       nodeSelector:
       {{ toYaml .Values.nodeSelector | indent 8 }}

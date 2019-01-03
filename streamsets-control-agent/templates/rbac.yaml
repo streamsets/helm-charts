@@ -10,13 +10,18 @@ metadata:
   namespace: {{ .Release.Namespace }}
   name: {{ template "fullname" . }}
 rules:
-- apiGroups: ["", "extensions", "autoscaling"]
+- apiGroups: ["", "extensions", "autoscaling", "apps"]
   resources: ["pods", "deployments", "replicasets", "horizontalpodautoscalers", "services", "ingresses"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 - apiGroups: [""]
   resources: ["secrets"]
-  resourceNames: ["{{ template "fullname" . }}-credentials"]
+  #resourceNames: ["{{ template "fullname" . }}-credentials"]
   verbs: ["get", "update"]
+{{- if .Values.streamsets.crdEnabled }}
+- apiGroups: ["streamsets.k8s.io"]
+  resources: ["sdcs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -31,4 +36,32 @@ subjects:
   - kind: ServiceAccount
     name: {{ template "fullname" . }}
     namespace: {{ .Release.Namespace }}
+---
+{{- if .Values.streamsets.crdEnabled }}
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: crd-handler
+rules:
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions", ]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apiextensions.k8s.io", "streamsets.k8s.io"]
+  resources: ["customresourcedefinitions", "sdcs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "fullname" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: crd-handler
+subjects:
+- kind: ServiceAccount
+  name: {{ template "fullname" . }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}
 {{- end }}
