@@ -20,3 +20,9 @@ krb:
   adminKey: <secret key for the above account>
   realm: <the realm of the organization>
   kdcType: < AD | MIT >
+##
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources: {}
+nodeSelector: {}

@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'kunickiaj/chart-testing@sha256:1d2bd3bdeebde3e9a0f371dca0ea880d02b69f5355e71b116bab8abbcfb1084a'
+      image 'kunickiaj/chart-testing'
       args '--user root:root'
     }
   }
@@ -40,7 +40,7 @@ pipeline {
     }
     stage('lint') {
       steps {
-        sh "ct lint --chart-dirs . --validate-maintainers=false --debug"
+        sh "#!/bin/sh\nct lint --chart-dirs . --validate-maintainers=false --debug"
       }
     }
   }

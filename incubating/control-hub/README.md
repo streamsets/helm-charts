@@ -12,10 +12,16 @@ This chart supports both Ingress and Istio Gateway for providing routing and loa
 
 ## Installing the Chart
 
+First, add the streamsets incubating repository to helm.
+
+```bash
+helm repo add streamsets-incubating https://streamsets.github.io/helm-charts/incubating
+```
+
 To install the chart with the release name `my-release` into the namespace `streamsets` using a values file named `sch-values.yaml`:
 
 ```bash
-helm install streamsets/control-hub --name my-release --namespace streamsets --values sch-values.yaml
+helm install streamsets-incubating/control-hub --name my-release --namespace streamsets --values sch-values.yaml
 ```
 
 ## Configuration
@@ -24,7 +30,7 @@ The following tables lists the configurable parameters of the chart and their de
 
 | Parameter                            | Description                                                                                | Default                                                                            |
 | ------------------------------------ | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| `image.repository`                   | Control Hub image name                                                                     | `streamsets/control-hub`                                                           |
+| `image.repository`                   | Control Hub image name                                                                     | `streamsets-incubating/control-hub`                                                           |
 | `image.tag`                          | The version of the official image to use                                                   | `latest`                                                                           |
 | `image.pullPolicy`                   | Pull policy for the image                                                                  | `IfNotPresent`                                                                     |
 | `service.type`                       | Service resource type. Typically ClusterIP                                                 | ClusterIP                                                                          |
