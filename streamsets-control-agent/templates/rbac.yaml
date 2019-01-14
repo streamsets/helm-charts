@@ -2,20 +2,29 @@
 kind: ServiceAccount
 apiVersion: v1
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ include "control-agent.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "control-agent.name" . }}
+    helm.sh/chart: {{ include "control-agent.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ template "fullname" . }}
+  name: {{ include "control-agent.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "control-agent.name" . }}
+    helm.sh/chart: {{ include "control-agent.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 rules:
 - apiGroups: ["", "extensions", "autoscaling", "apps"]
   resources: ["pods", "deployments", "replicasets", "horizontalpodautoscalers", "services", "ingresses"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 - apiGroups: [""]
   resources: ["secrets"]
-  #resourceNames: ["{{ template "fullname" . }}-credentials"]
   verbs: ["get", "update"]
 {{- if .Values.streamsets.crdEnabled }}
 - apiGroups: ["streamsets.k8s.io"]
@@ -26,22 +35,32 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ include "control-agent.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "control-agent.name" . }}
+    helm.sh/chart: {{ include "control-agent.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ template "fullname" . }}
+  name: {{ include "control-agent.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "fullname" . }}
+    name: {{ include "control-agent.fullname" . }}
     namespace: {{ .Release.Namespace }}
 ---
 {{- if .Values.streamsets.crdEnabled }}
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: crd-handler
+  name: streamsets-crd-handler
+  labels:
+    app.kubernetes.io/name: {{ include "control-agent.name" . }}
+    helm.sh/chart: {{ include "control-agent.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 rules:
 - apiGroups: ["apiextensions.k8s.io"]
   resources: ["customresourcedefinitions", ]
@@ -53,15 +72,20 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ include "control-agent.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "control-agent.name" . }}
+    helm.sh/chart: {{ include "control-agent.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: crd-handler
+  name: streamsets-crd-handler
 subjects:
 - kind: ServiceAccount
-  name: {{ template "fullname" . }}
+  name: {{ include "control-agent.fullname" . }}
   namespace: {{ .Release.Namespace }}
 {{- end }}
 {{- end }}

@@ -1,30 +1,32 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ include "control-agent.fullname" . }}
   labels:
-    app: {{ template "fullname" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "control-agent.name" . }}
+    helm.sh/chart: {{ include "control-agent.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "control-agent.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "fullname" . }}
-        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-        release: "{{ .Release.Name }}"
-        heritage: "{{ .Release.Service }}"
+        app.kubernetes.io/name: {{ include "control-agent.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       {{- if .Values.rbac.enabled }}
-      serviceAccountName: {{ template "fullname" . }}
+      serviceAccountName: {{ include "control-agent.fullname" . }}
       {{- else }}
       serviceAccountName: default
       {{- end }}
       terminationGracePeriodSeconds: 60
       containers:
-        - name: {{ template "fullname" . }}
+        - name: {{ include "control-agent.fullname" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
 	  {{- if .Values.krb.enabled }}
@@ -53,14 +55,14 @@ spec:
           - name: dpm_agent_token_string
             valueFrom:
               secretKeyRef:
-                name: {{ template "fullname" . }}-credentials
+                name: {{ include "control-agent.fullname" . }}
                 key: apiToken
           - name: dpm_agent_name
             value: {{ .Release.Name }}
           - name: dpm_agent_orgId
             value: {{required "An SCH orgId is required!" .Values.streamsets.orgId }}
           - name: dpm_agent_secret
-            value: {{ template "fullname" . }}-credentials
+            value: {{ include "control-agent.fullname" . }}
           - name: dpm_agent_crd_enabled
             value: "{{.Values.streamsets.crdEnabled}}"
 	  {{- if .Values.krb.enabled }}
