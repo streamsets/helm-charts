@@ -6,7 +6,16 @@ Collaborative development, automated deployment, scalable execution and governan
 
 For enterprises that desire a disciplined approach to managing multi-pipeline dataflows, Control Hub provides a cloud-native environment for design, deployment, monitoring and maintenance of data movement architectures.
 
+## Incubating Status
+
+The status of this chart is `incubating` and as such you may still encounter issues.
+
+During the beta period, if you are an existing customer, you can apply for access by filling out the following form:
+https://goo.gl/forms/i76juwY3ZqS2il3l2
+
 ## Introduction
+
+_StreamSets Control Hub is licensed software, and access to the image used in this chart is not public. You must also have a valid Control Hub license key to install this software._
 
 This chart supports both Ingress and Istio Gateway for providing routing and load balancing. Istio is optional, but can be enabled to take advantage of its telemetry and routing capabilities when installing the chart into a namespace with automatic sidecar injection enabled. It has an optional dependency on MySQL. An external SQL database (MySQL or Postgres) can be configured in which case this chart does not manage the database. It does install and configure InfluxDB for time series metrics.
 
