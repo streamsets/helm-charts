@@ -119,6 +119,7 @@ spec:
              "q=CREATE USER \"${INFLUXDB_USER}\" WITH PASSWORD '${INFLUXDB_PASSWORD}' WITH ALL PRIVILEGES"
         securityContext:
           runAsNonRoot: true
+          runAsUser: 1000
         env:
         - name: INFLUXDB_USER
           value: {{ .Values.schInfluxUser }}
@@ -168,6 +169,7 @@ spec:
              "q=CREATE DATABASE ${DB_NAME}"
         securityContext:
           runAsNonRoot: true
+          runAsUser: 1000
         env:
         - name: DB_NAME
           value: dpm
@@ -220,6 +222,7 @@ spec:
              "q=CREATE DATABASE ${DB_NAME}"
         securityContext:
           runAsNonRoot: true
+          runAsUser: 1000
         env:
         - name: DB_NAME
           value: dpm_app
@@ -289,6 +292,7 @@ spec:
         {{- end }}
         securityContext:
           runAsNonRoot: true
+          runAsUser: 1000
         env:
         - name: DPM_CONF_APPS_TO_START
           value: "security"
