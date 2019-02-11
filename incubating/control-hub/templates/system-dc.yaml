@@ -52,12 +52,13 @@ spec:
     protocol: TCP
   selector:
     app: system-dc
+    release: {{ .Release.Name }}
 {{- if .Values.istio.enabled }}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: "system-dc"
+  name: "{{ template "fullname" . }}-system-dc"
   labels:
     app: system-dc
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
