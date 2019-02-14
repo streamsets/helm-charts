@@ -1,7 +1,7 @@
 # Default values for Control Hub
 image:
   repository: streamsets/control-hub
-  tag: latest
+  tag: 3.8.0
   pullPolicy: IfNotPresent
   pullSecret:  # set to a secret name containing any necessary private registry credentials
   dev: false   # set to true if deploying developer builds rather than production builds
@@ -48,17 +48,7 @@ nodeSelector: {}
 ##
 common:
   env: &COMMON_ENV
-    DPM_CONF_MAIL_TRANSPORT_PROTOCOL: smtp
-    DPM_CONF_MAIL_SMTP_HOST:
-    DPM_CONF_MAIL_SMTP_PORT: 587
-    DPM_CONF_MAIL_SMTP_STARTTLS_ENABLE: true
-    DPM_CONF_MAIL_SMTP_AUTH: true
-    DPM_CONF_MAIL_SMTPS_HOST:
-    DPM_CONF_MAIL_SMTPS_PORT: 465
-    DPM_CONF_MAIL_SMTPS_AUTH: true
-    DPM_CONF_XMAIL_USERNAME:
-    DPM_CONF_XMAIL_PASSWORD:
-    DPM_CONF_XMAIL_FROM_ADDRESS:
+    DPM_JAVA_OPTS: "-Xms128m -Xmx512m"
 
 appProto: http
 apps:

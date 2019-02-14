@@ -106,6 +106,39 @@ spec:
                 key: admin-password
           - name: DPM_CONF_PIPELINE_DESIGNER_SYSTEM_SDC_URL
             value: "http://{{ template "fullname" $ }}-system-dc.{{ $.Release.Namespace }}.svc.cluster.local:18630"
+          - name: DPM_CONF_MAIL_TRANSPORT_PROTOCOL
+            value: {{ default "smtp" $.Values.mailProtocol }}
+          - name: DPM_CONF_MAIL_SMTP_HOST
+            value: {{ default "none" $.Values.mailHost }}
+          - name: DPM_CONF_MAIL_SMTP_PORT
+            value: {{ default "587" $.Values.mailPort | quote }}
+          - name: DPM_CONF_MAIL_SMTP_STARTTLS_ENABLE
+            value: {{ default "true" $.Values.mailStarttls | quote }}
+          - name: DPM_CONF_MAIL_SMTP_AUTH
+          {{- if $.Values.mailUsername }}
+            value: {{ "true" | quote }}
+          {{- else }}
+            value: {{ "false" | quote }}
+          {{- end }}
+          - name: DPM_CONF_MAIL_SMTPS_HOST
+            value: {{ default "none" $.Values.mailHost }}
+          - name: DPM_CONF_MAIL_SMTPS_PORT
+            value: {{ default "465" $.Values.mailPort | quote }}
+          - name: DPM_CONF_MAIL_SMTPS_AUTH
+          {{- if $.Values.mailUsername }}
+            value: {{ "true" | quote }}
+          {{- else }}
+            value: {{ "false" | quote }}
+          {{- end }}
+          - name: DPM_CONF_XMAIL_USERNAME
+            value: {{ $.Values.mailUsername }}
+          - name: DPM_CONF_XMAIL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "fullname" $ }}"
+                key: mail-password
+          - name: DPM_CONF_XMAIL_FROM_ADDRESS
+            value: {{ default "no-reply@streamsets.com" $.Values.mailFromAddress }}
           ports:
           - name: http
             containerPort: {{ $.Values.service.port }}

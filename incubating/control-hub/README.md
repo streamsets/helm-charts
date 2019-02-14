@@ -37,148 +37,181 @@ helm install streamsets-incubating/control-hub --name my-release --namespace str
 
 The following tables lists the configurable parameters of the chart and their default values.
 
-| Parameter                            | Description                                                                                | Default                                                                            |
-| ------------------------------------ | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| `image.repository`                   | Control Hub image name                                                                     | `streamsets-incubating/control-hub`                                                           |
-| `image.tag`                          | The version of the official image to use                                                   | `latest`                                                                           |
-| `image.pullPolicy`                   | Pull policy for the image                                                                  | `IfNotPresent`                                                                     |
-| `service.type`                       | Service resource type. Typically ClusterIP                                                 | ClusterIP                                                                          |
-| `service.port`                       | Service Port                                                                               | `18631`                                                                            |
-| `service.adminPort`                  | Admin UI Service Port                                                                      | `18632`                                                                            |
-| `ingress.enabled`                    | Whether to create Ingress resources. Typically mutually exclusive to `istio.enabled`       | `true`                                                                             |
-| `ingress.proto`                      | Scheme for Ingress/Istio Gateway (http or https)                                           | https                                                                              |
-| `ingress.domain`                     | The FQDN minus hostname that users will visit                                              | example.com                                                                        |
-| `ingress.host`                       | The hostname part of the FQDN that users will visit                                        | streamsets                                                                         |
-| `ingress.annotations`                | Optional list of annotations to apply to the Ingress resource                              | None                                                                               |
-| `istio.enabled`                      | When set to true, will create Istio Gateway/Virtual Service resources instead of Ingress.  |
-| `istio.mTLS`                         | Sets the Istio authentication policy to either PERMISSIVE/ISTIO_MUTUAL, or DISABLE         |
-| `resources`                          | Resource request for the pods                                                              | None                                                                               |
-| `nodeSelector`                          | Node selector for the pods                                                              | None                                                                               |
-| `systemDataCollector.enabled` | Whether to install a system Data Collector | true |
-| `systemDataCollector.image.repository`                   | Control Hub image name                                                                     | `streamsets/datacollector`                                                           |
-| `systemDataCollector.image.tag`                          | The version of the official image to use                                                   | `latest`                                                                           |
-| `systemDataCollector.image.pullPolicy`                   | Pull policy for the image                                                                  | `IfNotPresent`                                                                     |
-| `systemDataCollector.resources`                          | Resource request for the pods                                                              | None                                                                               |
-| `systemDataCollector.nodeSelector`                          | Node selector for the pods                                                              | None                                                                               |
-| `common.env`                         | Environment to set for all app pods                                                        | None                                                                               |
-| `appProto`                           | Scheme for app-to-app communication. `http` or `https`.                                    | http                                                                               |
-| `apps`                               | List of app services and their associated `group`              |  |
-| `apps.name`                          | Name of service for app              |  |
-| `apps.deployment`                    | Deployment name for service found in `deployments`   | `apps.name` |
-| `deployments`                        | Deployment specific information related to SERVICES in `apps`   | A `deployment` per app service. |
-| `deployments.name`                   | Label for deployment. Used to associate app service to this deployment           | `apps.name`|
-| `deployments.appsToStart`             | List of apps to start in this deployment                                         | `apps.name` |
-| `deployments.replicaCount`            | Number of replicas for this deployment                                          | 1 |
-| `deployments.env`                    | App specific environment settings.                              | See values.yaml `common.env` for detailed app information.|
-||
-| `adminPassword`                      | Sets the admin password for the admin app                                                  | Random password\*                                                                  |
-||
-| `mysql.enabled`                      | Whether to deploy a MySQL instance. If set to false, an external database is required.     | `true`                                                                             |
-| `mysql.mysqlRootPassword`            | Root MySQL password to set                                                                 | Random password\*                                                                  |
-| `mysql.mysqlUser`                    | MySQL user for SCH apps                                                                    | streamsets                                                                         |
-| `mysql.mysqlPassword`                | Password for MySQL user                                                                    | Random password\*                                                                  |
-| `mysql.persistence`                  | Create a volume to store data                                                              | `true`                                                                             |
-| `mysql.persistence.accessMode`       | ReadWriteOnce or ReadOnly                                                                  | ReadWriteOnce                                                                      |
-| `mysql.persistence.size`             | Size of persistent volume claim                                                            | 8Gi                                                                                |
-| `mysql.resources`                    | CPU/Memory resource requests/limits                                                        | Memory: `256Mi`, CPU: `100m`                                                       |
-||
-|`schInfluxUser`                      | The username to use for InfluxDB                                                           | streamsets                                                                         |
-| `schInfluxPassword`                  | The password for the InfluxDB user.                                                        | Random password\*                                                                  |
-| `influxdb.proto`                     | Scheme for InfluxDB API (http or https)                                                    | http                                                                               |
-| `influxdb.enabled`                   | Whether to deploy an InfluxDB instance. If set to false, an external instance is required. | `true`                                                                             |
-| `influxdb.image.tag`                 | Version of InfluxDB to use                                                                 | 1.3                                                                                |
-| `influxdb.persistence`               | Whether to use a persistent volume claim for storage                                       | `true`                                                                             |
-| `influxdb.persistence.size`          | Size of persistent volume claim                                                            | 8Gi                                                                                |
-| `influxdb.config.reporting_disabled` | Whether to enable usage reporting to InfluxData                                            | `false`                                                                            |
-| `influxdb.http.bind_address`         | Port to use for InfluxDB API                                                               | `8086`                                                                             |
+| Parameter                              | Description                                                                                | Default                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| `image.repository`                     | Control Hub image name                                                                     | `streamsets-incubating/control-hub`                        |
+| `image.tag`                            | The version of the official image to use                                                   | `latest`                                                   |
+| `image.pullPolicy`                     | Pull policy for the image                                                                  | `IfNotPresent`                                             |
+| `service.type`                         | Service resource type. Typically ClusterIP                                                 | `ClusterIP`                                                |
+| `service.port`                         | Service Port                                                                               | `18631`                                                    |
+| `service.adminPort`                    | Admin UI Service Port                                                                      | `18632`                                                    |
+| `ingress.enabled`                      | Whether to create Ingress resources. Typically mutually exclusive to `istio.enabled`       | `true`                                                     |
+| `ingress.proto`                        | Scheme for Ingress/Istio Gateway (http or https)                                           | `https`                                                    |
+| `ingress.domain`                       | The FQDN minus hostname that users will visit                                              | example.com                                                |
+| `ingress.host`                         | The hostname part of the FQDN that users will visit                                        | streamsets                                                 |
+| `ingress.annotations`                  | Optional list of annotations to apply to the Ingress resource                              | None                                                       |
+| `istio.enabled`                        | When set to true, will create Istio Gateway/Virtual Service resources instead of Ingress.  |
+| `istio.mTLS`                           | Sets the Istio authentication policy to either PERMISSIVE/ISTIO_MUTUAL, or DISABLE         |
+| `resources`                            | Resource request for the pods                                                              | None                                                       |
+| `nodeSelector`                         | Node selector for the pods                                                                 | None                                                       |
+| `mailProtocol`                         | Whether to use the SMTP or SMTPS protocol for sending email.                               | `smtp`                                                     |
+| `mailStarttls`                         | Whether to enable StartTLS. Used only with the `smtp` protocol.                            | `true`                                                     |
+| `mailHost`                             | Mail server hostname                                                                       | None                                                       |
+| `mailPort`                             | Mail server port number                                                                    | `587` for `smtp` and `465` for `smtps`                     |
+| `mailUsername`                         | Username if required                                                                       | None                                                       |
+| `mailPassword`                         | Password if required                                                                       | None                                                       |
+| `mailFromAddress`                      | From address of email sent by Control Hub                                                  | `no-reply@streamsets.com`                                  |
+| `systemDataCollector.enabled`          | Whether to install a system Data Collector                                                 | `true`                                                     |
+| `systemDataCollector.image.repository` | Control Hub image name                                                                     | `streamsets/datacollector`                                 |
+| `systemDataCollector.image.tag`        | The version of the official image to use                                                   | `latest`                                                   |
+| `systemDataCollector.image.pullPolicy` | Pull policy for the image                                                                  | `IfNotPresent`                                             |
+| `systemDataCollector.resources`        | Resource request for the pods                                                              | None                                                       |
+| `systemDataCollector.nodeSelector`     | Node selector for the pods                                                                 | None                                                       |
+| `common.env`                           | Environment to set for all app pods                                                        | None                                                       |
+| `appProto`                             | Scheme for app-to-app communication. `http` or `https`.                                    | `http`                                                     |
+| `apps`                                 | List of app services and their associated `group`                                          |                                                            |
+| `apps.name`                            | Name of service for app                                                                    |                                                            |
+| `apps.deployment`                      | Deployment name for service found in `deployments`                                         | `apps.name`                                                |
+| `deployments`                          | Deployment specific information related to SERVICES in `apps`                              | A `deployment` per app service.                            |
+| `deployments.name`                     | Label for deployment. Used to associate app service to this deployment                     | `apps.name`                                                |
+| `deployments.appsToStart`              | List of apps to start in this deployment                                                   | `apps.name`                                                |
+| `deployments.replicaCount`             | Number of replicas for this deployment                                                     | `1`                                                        |
+| `deployments.env`                      | App specific environment settings.                                                         | See values.yaml `common.env` for detailed app information. |
+|                                        |
+| `adminPassword`                        | Sets the admin password for the admin app                                                  | Random password\*                                          |
+|                                        |
+| `mysql.enabled`                        | Whether to deploy a MySQL instance. If set to false, an external database is required.     | `true`                                                     |
+| `mysql.mysqlRootPassword`              | Root MySQL password to set                                                                 | Random password\*                                          |
+| `mysql.mysqlUser`                      | MySQL user for SCH apps                                                                    | `streamsets`                                               |
+| `mysql.mysqlPassword`                  | Password for MySQL user                                                                    | Random password\*                                          |
+| `mysql.persistence`                    | Create a volume to store data                                                              | `true`                                                     |
+| `mysql.persistence.accessMode`         | ReadWriteOnce or ReadOnly                                                                  | ReadWriteOnce                                              |
+| `mysql.persistence.size`               | Size of persistent volume claim                                                            | 8Gi                                                        |
+| `mysql.resources`                      | CPU/Memory resource requests/limits                                                        | Memory: `256Mi`, CPU: `100m`                               |
+|                                        |
+| `schInfluxUser`                        | The username to use for InfluxDB                                                           | `streamsets`                                               |
+| `schInfluxPassword`                    | The password for the InfluxDB user.                                                        | Random password\*                                          |
+| `influxdb.proto`                       | Scheme for InfluxDB API (http or https)                                                    | `http`                                                     |
+| `influxdb.enabled`                     | Whether to deploy an InfluxDB instance. If set to false, an external instance is required. | `true`                                                     |
+| `influxdb.image.tag`                   | Version of InfluxDB to use                                                                 | 1.3                                                        |
+| `influxdb.persistence`                 | Whether to use a persistent volume claim for storage                                       | `true`                                                     |
+| `influxdb.persistence.size`            | Size of persistent volume claim                                                            | 8Gi                                                        |
+| `influxdb.config.reporting_disabled`   | Whether to enable usage reporting to InfluxData                                            | `false`                                                    |
+| `influxdb.http.bind_address`           | Port to use for InfluxDB API                                                               | `8086`                                                     |
 
 _Note: See [MySQL chart readme](https://github.com/helm/charts/blob/master/stable/mysql/README.md) for more detailed MySQL configuration options as well as the values.yaml for this chart._
-
 _Note: Dynamic scaling is not supported with random passwords_
 
 ## Custom Configuration Tips
 
-### Deploy apps in minikube with `pipelinestore` in one container and all other apps in another container.
+You will need to configure a ServiceEntry and VirtualService for your mail server if it is outside of the service mesh when Istio is enabled.
 
-``` ---
-   image:
-     pullPolicy: Never
-   ingress:
-     enabled: false
-     proto: http
-     # Used to create an Ingress record.
-     domain: minikube.local
-     host: streamsets
-     annotations:
-   istio:
-     enabled: true
-     mTLS: PERMISSIVE
+For example:
 
-   adminPassword: streamSets123
-   schInfluxPassword: streamSets123
+```yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: mailjet
+spec:
+  hosts:
+    - in-v3.mailjet.com
+  ports:
+    - number: 2525
+      name: smtp
+      protocol: TCP
+  resolution: DNS
+  location: MESH_EXTERNAL
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: mailjet
+spec:
+  hosts:
+    - in-v3.mailjet.com
+  tls:
+    - match:
+        - port: 2525
+          sni_hosts:
+            - in-v3.mailjet.com
+      route:
+        - destination:
+            host: in-v3.mailjet.com
+            port:
+              number: 2525
+          weight: 100
+```
 
-   common:
-     env: &COMMON_ENV
-       DPM_CONF_MAIL_TRANSPORT_PROTOCOL: smtp
-       DPM_CONF_MAIL_SMTP_HOST:
-       DPM_CONF_MAIL_SMTP_PORT: 587
-       DPM_CONF_MAIL_SMTP_STARTTLS_ENABLE: true
-       DPM_CONF_MAIL_SMTP_AUTH: true
-       DPM_CONF_MAIL_SMTPS_HOST:
-       DPM_CONF_MAIL_SMTPS_PORT: 465
-       DPM_CONF_MAIL_SMTPS_AUTH: true
-       DPM_CONF_XMAIL_USERNAME:
-       DPM_CONF_XMAIL_PASSWORD:
-       DPM_CONF_XMAIL_FROM_ADDRESS:
+### Deploy apps in minikube with `pipelinestore` in one container and all other apps in another container
 
-   deployments:
-   - name: one
-     appsToStart: "security,messaging,jobrunner,topology,notification,sla,policy,provisioning,scheduler,sdp_classification,reporting"
-     replicaCount: 1
-     container:
-       env:
-         <<: *COMMON_ENV
-   - name: pipelinestore
-     appsToStart: "pipelinestore"
-     replicaCount: 1
-     container:
-       env:
-         <<: *COMMON_ENV
-         DPM_JAVA_OPTS: "-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5006,suspend=n"
+```yaml
+---
+  image:
+    pullPolicy: Never
+  ingress:
+    enabled: false
+    proto: http
+    # Used to create an Ingress record.
+    domain: minikube.local
+    host: streamsets
+    annotations:
+  istio:
+    enabled: true
+    mTLS: PERMISSIVE
 
-   appProto: http
-   apps:
-   - name: security
-     deployment: one
-   - name: pipelinestore
-     deployment: pipelinestore
-   - name: messaging
-     deployment: one
-   - name: jobrunner
-     deployment: one
-   - name: timeseries
-     deployment: one
-   - name: topology
-     deployment: one
-   - name: notification
-     deployment: one
-   - name: sla
-     deployment: one
-   - name: policy
-     deployment: one
-   - name: provisioning
-     deployment: one
-   - name: scheduler
-     deployment: one
-   - name: sdp_classification
-     deployment: one
-   - name: reporting
-     deployment: one
+  adminPassword: streamSets123
+  schInfluxPassword: streamSets123
 
-   mysql:
-     imageTag: 5.7
-     mysqlRootPassword: streamSets123
-     mysqlPassword: streamSets123
-     podAnnotations:
-       sidecar.istio.io/inject: "false"
+  common:
+    env: &COMMON_ENV
+      DPM_JAVA_OPTS: "-Xms128m -Xmx1024m"
+
+  deployments:
+  - name: one
+    appsToStart: "security,messaging,jobrunner,topology,notification,sla,policy,provisioning,scheduler,sdp_classification,reporting"
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+  - name: pipelinestore
+    appsToStart: "pipelinestore"
+    replicaCount: 1
+    container:
+      env:
+        <<: *COMMON_ENV
+        DPM_JAVA_OPTS: "-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5006,suspend=n"
+
+  appProto: http
+  apps:
+  - name: security
+    deployment: one
+  - name: pipelinestore
+    deployment: pipelinestore
+  - name: messaging
+    deployment: one
+  - name: jobrunner
+    deployment: one
+  - name: timeseries
+    deployment: one
+  - name: topology
+    deployment: one
+  - name: notification
+    deployment: one
+  - name: sla
+    deployment: one
+  - name: policy
+    deployment: one
+  - name: provisioning
+    deployment: one
+  - name: scheduler
+    deployment: one
+  - name: sdp_classification
+    deployment: one
+  - name: reporting
+    deployment: one
+
+  mysql:
+    mysqlRootPassword: streamSets123
+    mysqlPassword: streamSets123
 ```
