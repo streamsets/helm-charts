@@ -132,11 +132,13 @@ spec:
           {{- end }}
           - name: DPM_CONF_XMAIL_USERNAME
             value: {{ $.Values.mailUsername }}
+          {{- if $.Values.mailUsername }}
           - name: DPM_CONF_XMAIL_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: "{{ template "fullname" $ }}"
                 key: mail-password
+          {{- end }}
           - name: DPM_CONF_XMAIL_FROM_ADDRESS
             value: {{ default "no-reply@streamsets.com" $.Values.mailFromAddress }}
           ports:
