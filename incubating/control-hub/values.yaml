@@ -5,6 +5,9 @@ image:
   pullPolicy: IfNotPresent
   pullSecret:  # set to a secret name containing any necessary private registry credentials
   dev: false   # set to true if deploying developer builds rather than production builds
+security:
+  asUser: 1100
+  fsGroup: 1100
 service:
   type: ClusterIP
   port: 18631
