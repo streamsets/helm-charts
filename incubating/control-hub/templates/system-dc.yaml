@@ -1,19 +1,27 @@
 {{ if .Values.systemDataCollector.enabled }}
-apiVersion: extensions/v1beta1
+{{- $systemDataCollectorName := "system-dc" }}
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ template "fullname" . }}-system-dc"
-  chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-  release: {{ .Release.Name }}
-  heritage: {{ .Release.Service }}
-  namespace: {{ .Release.Namespace }}
+  name: "{{ include "control-hub.fullname" . }}-{{ $systemDataCollectorName }}"
+  labels:
+    app.kubernetes.io/name: {{ $systemDataCollectorName }}
+    app.kubernetes.io/component: "datacollector"
+    app.kubernetes.io/part-of: {{ include "control-hub.name" $ }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "control-hub.chart" . }}
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ $systemDataCollectorName }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: system-dc
-        release: {{ .Release.Name }}
+        app.kubernetes.io/name: {{ $systemDataCollectorName }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: datacollector
@@ -37,13 +45,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ template "fullname" $ }}-system-dc"
+  name: "{{ include "control-hub.fullname" . }}-{{ $systemDataCollectorName }}"
   labels:
-    app: system-dc
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    namespace: {{ .Release.Namespace }}
+    app.kubernetes.io/name: {{ $systemDataCollectorName }}
+    app.kubernetes.io/component: "datacollector"
+    app.kubernetes.io/part-of: {{ include "control-hub.name" $ }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "control-hub.chart" . }}
 spec:
   ports:
   - name: http
@@ -51,22 +60,23 @@ spec:
     targetPort: 18630
     protocol: TCP
   selector:
-    app: system-dc
-    release: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ $systemDataCollectorName }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Values.istio.enabled }}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: "{{ template "fullname" . }}-system-dc"
+  name: "{{ include "control-hub.fullname" . }}-{{ $systemDataCollectorName }}"
   labels:
-    app: system-dc
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    namespace: {{ .Release.Namespace }}
+    app.kubernetes.io/name: {{ $systemDataCollectorName }}
+    app.kubernetes.io/component: "datacollector"
+    app.kubernetes.io/part-of: {{ include "control-hub.name" $ }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "control-hub.chart" . }}
 spec:
-  host: "{{ .Release.Name }}-system-dc.{{ .Release.Namespace }}.svc.cluster.local"
+  host: "{{ include "control-hub.fullname" . }}-{{ $systemDataCollectorName }}.{{ .Release.Namespace }}.svc.cluster.local"
   trafficPolicy:
     tls:
       {{- if eq .Values.istio.mTLS "DISABLE" }}
@@ -78,16 +88,17 @@ spec:
 apiVersion: "authentication.istio.io/v1alpha1"
 kind: "Policy"
 metadata:
-  name: "{{ template "fullname" . }}-system-dc"
+  name: "{{ include "control-hub.fullname" . }}-{{ $systemDataCollectorName }}"
   labels:
-    app: {{ template "name" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    namespace: {{ .Release.Namespace }}
+    app.kubernetes.io/name: {{ $systemDataCollectorName }}
+    app.kubernetes.io/component: "datacollector"
+    app.kubernetes.io/part-of: {{ include "control-hub.name" $ }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "control-hub.chart" . }}
 spec:
   targets:
-  - name: "{{ .Release.Name }}-system-dc"
+  - name: "{{ include "control-hub.fullname" . }}-{{ $systemDataCollectorName }}"
   peers:
   - mtls:
       mode: {{ .Values.istio.mTLS }}

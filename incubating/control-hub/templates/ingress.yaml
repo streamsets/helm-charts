@@ -1,18 +1,17 @@
 {{- if (.Values.ingress.enabled) and not .Values.ingress.istio -}}
-{{- $serviceName := include "fullname" . -}}
+{{- $serviceName := include "control-hub.fullname" . -}}
 {{- $servicePort := .Values.service.port -}}
 {{- $adminPort := .Values.service.adminPort -}}
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ include "control-hub.fullname" . }}
   labels:
-    app: {{ template "name" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    namespace: {{ .Release.Namespace }}
+    app.kubernetes.io/name: {{ include "control-hub.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "control-hub.chart" . }}
   annotations:
     {{- range $key, $value := .Values.ingress.annotations }}
       {{ $key }}: {{ $value | quote }}

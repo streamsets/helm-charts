@@ -4,11 +4,11 @@ kind: DestinationRule
 metadata:
   name: {{ template "influxdb.fullname" . }}
   labels:
-    app: influxdb
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    namespace: {{ .Release.Namespace }}
+    app.kubernetes.io/name: influxdb
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "control-hub.chart" . }}
 spec:
   host: "{{ .Release.Name }}-influxdb.{{ .Release.Namespace }}.svc.cluster.local"
   trafficPolicy:
@@ -22,13 +22,13 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: "{{ template "fullname" . }}-mysql"
+  name: "{{ include "control-hub.fullname" . }}-mysql"
   labels:
-    app: mysql
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    namespace: {{ .Release.Namespace }}
+    app.kubernetes.io/name: mysql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "control-hub.chart" . }}
 spec:
   host: "{{ .Release.Name }}-mysql.{{ .Release.Namespace }}.svc.cluster.local"
   trafficPolicy:
@@ -39,15 +39,14 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: "{{ template "fullname" $ }}-{{ $app.name | replace "_" "-" }}"
+  name: "{{ include "control-hub.fullname" $ }}-{{ $app.name | replace "_" "-" }}"
   labels:
-    app: {{ $app.name | quote }}
-    chart: {{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}
-    release: {{ $.Release.Name }}
-    heritage: {{ $.Release.Service }}
-    namespace: {{ $.Release.Namespace }}
+    app.kubernetes.io/name: {{ $app.name | quote }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    helm.sh/chart: {{ include "control-hub.chart" $ }}
 spec:
-  host: "{{ template "fullname" $ }}-{{ $app.name | replace "_" "-" }}.{{ $.Release.Namespace }}.svc.cluster.local"
+  host: "{{ include "control-hub.fullname" $ }}-{{ $app.name | replace "_" "-" }}.{{ $.Release.Namespace }}.svc.cluster.local"
   trafficPolicy:
     tls:
       {{- if eq $.Values.istio.mTLS "DISABLE" }}

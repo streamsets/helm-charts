@@ -3,13 +3,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ template "fullname" $ }}-{{ $app.name | replace "_" "-" }}"
+  name: "{{ include "control-hub.fullname" $ }}-{{ $app.name | replace "_" "-" }}"
   labels:
-    app: {{ $app.name | quote }}
-    chart: {{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}
-    release: {{ $.Release.Name }}
-    heritage: {{ $.Release.Service }}
-    namespace: {{ $.Release.Namespace }}
+    app.kubernetes.io/name: {{ $app.name | quote }}
+    app.kubernetes.io/component: {{ $app.name | quote }}
+    app.kubernetes.io/part-of: {{ include "control-hub.name" $ }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    helm.sh/chart: {{ include "control-hub.chart" $ }}
 spec:
   type: {{ $.Values.service.type }}
   ports:
@@ -22,5 +23,6 @@ spec:
     targetPort: {{ $.Values.service.adminPort }}
     protocol: TCP
   selector:
-    deployment: {{ $app.deployment | quote }}
+    app.kubernetes.io/name: {{ $app.deployment | quote }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
 {{- end }}
