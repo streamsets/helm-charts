@@ -1,7 +1,7 @@
 # Default values for Control Hub
 image:
   repository: streamsets/control-hub
-  tag: 3.9.0
+  tag: 3.13.0
   pullPolicy: IfNotPresent
   pullSecret:  # set to a secret name containing any necessary private registry credentials
   dev: false   # set to true if deploying developer builds rather than production builds
