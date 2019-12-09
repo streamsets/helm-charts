@@ -27,6 +27,7 @@ spec:
         app.kubernetes.io/part-of: {{ include "control-hub.name" $ }}
     spec:
       initContainers:
+      # check if the DB is up, and the table were populated.
       - name: init-mysql
         image: mysql
         env:
@@ -41,7 +42,18 @@ spec:
           value: "{{ template "mysql.fullname" $ }}.{{ $.Release.Namespace }}.svc.cluster.local"
         - name: DB_PORT
           value: "3306"
-        command: ['sh', '-c', 'mysql -w --connect-timeout=5 -s -N -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT USER()"']
+        command: ['sh', '-c', 
+          'i=100; until [ $i -eq 0 ] || mysql -w --connect-timeout=5 -s -N -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT * FROM {{ $deployment.name }}.APPLICATION_INFO;"; do sleep 3; i=$((i-1)); done ']
+      {{- if ne $deployment.name "security" }}
+      # Check if the security app is up. It is needed to register properly
+      - name: init-security
+        image: busybox
+        env:
+        - name: SECURITY_APP_HEALTH_URI
+          value: "http://{{ include "control-hub.fullname" $ }}-security.{{ $.Release.Namespace }}.svc.cluster.local:18631/public-rest/v1/health"
+        command: ['sh', '-c', 
+          'i=100; until [ $i -eq 0 ] || wget -O/dev/null -q ${SECURITY_APP_HEALTH_URI}; do sleep 3; i=$((i-1)); done ']
+      {{- end -}}
       {{- if $.Values.image.pullSecret }}
       imagePullSecrets:
       - name: "{{ $.Values.image.pullSecret }}"

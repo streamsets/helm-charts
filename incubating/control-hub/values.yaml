@@ -54,30 +54,43 @@ appProto: http
 apps:
   - name: security
     deployment: security
+    priority: "-7"
   - name: pipelinestore
     deployment: pipelinestore
+    priority: "-3"
   - name: messaging
     deployment: messaging
+    priority: "-4"
   - name: jobrunner
     deployment: jobrunner
+    priority: "-3"
   - name: timeseries
     deployment: timeseries
+    priority: "-3"
   - name: topology
     deployment: topology
+    priority: "-3"
   - name: notification
     deployment: notification
+    priority: "-3"
   - name: sla
     deployment: sla
+    priority: "-3"
   - name: policy
     deployment: policy
+    priority: "-3"
   - name: provisioning
     deployment: provisioning
+    priority: "-3"
   - name: scheduler
     deployment: scheduler
+    priority: "-3"
   - name: sdp_classification
     deployment: sdp_classification
+    priority: "-3"
   - name: reporting
     deployment: reporting
+    priority: "-3"
 
 deployments:
   - name: security
