@@ -12,7 +12,7 @@ metadata:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
     "helm.sh/hook": post-install, pre-upgrade
-    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-weight": {{ $app.priority | quote }}
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   backoffLimit: 5
@@ -51,7 +51,8 @@ spec:
         {{- end}}
         - name: DB_PORT
           value: "{{ $.Values.mysql.mysqlPort }}"
-        command: ['sh', '-c', 'mysql -w --connect-timeout=5 -s -N -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT USER()"']
+        command: ['sh', '-c', 
+              'i=5; until [ $i -eq 0 ] || mysql -w --connect-timeout=120 -s -N -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT USER()"; do sleep 3; i=$((i-1)); done']
       {{- if $.Values.image.pullSecret }}
       imagePullSecrets:
       - name: "{{ $.Values.image.pullSecret }}"
@@ -132,9 +133,14 @@ spec:
           - "/bin/sh"
           - "-c"
           - |
-             curl -v -m 10 -X POST {{ .Values.influxdb.proto }}://{{ template "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8086/query \
-             --data-urlencode \
-             "q=CREATE USER \"${INFLUXDB_USER}\" WITH PASSWORD '${INFLUXDB_PASSWORD}' WITH ALL PRIVILEGES"
+             i=5;
+             while [ $i -ne 0 ] && curl -v -m 10 -X POST \
+                {{ .Values.influxdb.proto }}://{{ template "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8086/query \
+                --data-urlencode \
+                "q=CREATE USER \"${INFLUXDB_USER}\" WITH PASSWORD '${INFLUXDB_PASSWORD}' WITH ALL PRIVILEGES"; do
+                  sleep 3;
+                  i=$((i-1));
+             done
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
@@ -182,9 +188,13 @@ spec:
           - "/bin/sh"
           - "-c"
           - |
-             curl -v -m 10 -u"${INFLUXDB_USER}:${INFLUXDB_PASSWORD}" -X POST {{ .Values.influxdb.proto }}://{{ template "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8086/query \
+            i=5;
+            while [ $i -ne 0 ] && curl -v -m 10 -u"${INFLUXDB_USER}:${INFLUXDB_PASSWORD}" -X POST {{ .Values.influxdb.proto }}://{{ template "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8086/query \
              --data-urlencode \
-             "q=CREATE DATABASE ${DB_NAME}"
+             "q=CREATE DATABASE ${DB_NAME}"; do
+               sleep 3;
+               i=$((i-1));
+            done
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
@@ -235,9 +245,13 @@ spec:
           - "/bin/sh"
           - "-c"
           - |
-             curl -v -m 10 -u"${INFLUXDB_USER}:${INFLUXDB_PASSWORD}" -X POST {{ .Values.influxdb.proto }}://{{ template "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8086/query \
+             i=5;
+             while [ $i -ne 0 ] && curl -v -m 10 -u"${INFLUXDB_USER}:${INFLUXDB_PASSWORD}" -X POST {{ .Values.influxdb.proto }}://{{ template "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8086/query \
              --data-urlencode \
-             "q=CREATE DATABASE ${DB_NAME}"
+             "q=CREATE DATABASE ${DB_NAME}"; do
+               sleep 3;
+               i=$((i-1));
+             done
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
@@ -264,7 +278,7 @@ metadata:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
     "helm.sh/hook": post-install
-    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-weight": "-5"
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   backoffLimit: 5
@@ -303,7 +317,8 @@ spec:
         {{- end}}
         - name: DB_PORT
           value: "{{ $.Values.mysql.mysqlPort }}"
-        command: ['sh', '-c', 'mysql -w --connect-timeout=5 -s -N -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT USER()"']
+        command: ['sh', '-c', 
+              'i=5; until [ $i -eq 0 ] || mysql -w --connect-timeout=5 -s -N -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT * FROM security.APPLICATION_INFO"; do sleep 5; i=$((i-1)); done']
       {{- if $.Values.image.pullSecret }}
       imagePullSecrets:
       - name: "{{ $.Values.image.pullSecret }}"
