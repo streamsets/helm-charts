@@ -32,16 +32,25 @@ spec:
         image: mysql
         env:
         - name: DB_USER
-          value: "root"
+          value: "{{ $.Values.mysql.mysqlRootUser }}"
+        {{- if $.Values.mysql.mysqlRootPassword }}
+        - name: DB_PASSWORD
+          value: "{{ $.Values.mysql.mysqlRootPassword }}"
+        {{- else }}
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: "{{ template "mysql.fullname" $ }}"
+              name: {{ template "mysql.fullname" $ }}
               key: mysql-root-password
+        {{- end }}
         - name: DB_HOST
+        {{- if $.Values.mysql.mysqlHost }}
+          value: "{{ $.Values.mysql.mysqlHost }}"
+        {{- else }}
           value: "{{ template "mysql.fullname" $ }}.{{ $.Release.Namespace }}.svc.cluster.local"
+        {{- end}}
         - name: DB_PORT
-          value: "3306"
+          value: "{{ $.Values.mysql.mysqlPort }}"
         command: ['sh', '-c', 
           'i=100; until [ $i -eq 0 ] || mysql -w --connect-timeout=5 -s -N -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT * FROM {{ $deployment.name }}.APPLICATION_INFO;"; do sleep 3; i=$((i-1)); done ']
       {{- if ne $deployment.name "security" }}
@@ -108,16 +117,25 @@ spec:
                 name: "{{ include "control-hub.fullname" $ }}"
                 key: influxdb-password
           - name: DB_USER
-            value: "root"
+            value: "{{ $.Values.mysql.mysqlRootUser }}"
+          {{- if $.Values.mysql.mysqlRootPassword }}
+          - name: DB_PASSWORD
+            value: "{{ $.Values.mysql.mysqlRootPassword }}"
+          {{- else }}
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ template "mysql.fullname" $ }}
                 key: mysql-root-password
+          {{- end }}
           - name: DB_HOST
+          {{- if $.Values.mysql.mysqlHost }}
+            value: "{{ $.Values.mysql.mysqlHost }}"
+          {{- else }}
             value: "{{ template "mysql.fullname" $ }}.{{ $.Release.Namespace }}.svc.cluster.local"
+          {{- end}}
           - name: DB_PORT
-            value: "3306"
+            value: "{{ $.Values.mysql.mysqlPort }}"
           - name: DPM_ADMIN_APP_PASSWORD
             valueFrom:
               secretKeyRef:

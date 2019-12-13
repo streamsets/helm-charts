@@ -181,6 +181,9 @@ schInfluxPassword:  # default is random password
 ##
 mysql:
   enabled: true
+  mysqlHost:  # default is svc.cluster.local
+  mysqlPort: 3306
+  mysqlRootUser: root
   mysqlRootPassword:  # default is random password -- you cannot currently scale when using random
   mysqlUser: streamsets
   mysqlPassword:  # default is random password

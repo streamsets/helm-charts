@@ -1,1 +1,4 @@
 .idea
+*.tar
+**/.DS_Store
+**/mysql-*tgz
