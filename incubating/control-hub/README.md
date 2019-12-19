@@ -2,6 +2,7 @@
 
 [StreamSets Control Hub](https://streamsets.com/products/sch)
 
+
 Collaborative development, automated deployment, scalable execution and governance of multi-pipeline topologies.
 
 For enterprises that desire a disciplined approach to managing multi-pipeline dataflows, Control Hub provides a cloud-native environment for design, deployment, monitoring and maintenance of data movement architectures.
@@ -53,12 +54,6 @@ systemDataCollector:
   enabled: true
 ```
 
-#### Database deployment
-
-Currently this chart deploys MySQL and work is underway to more readily support "bring your own" database.
-
-For now it is advised for Proof of Concept purposes to use the included MySQL database and set your own username/passwords for upgradability.
-
 This can be achieved at the command line during install:
 ```bash
 helm install incubating/control-hub --name sch --namespace streamsets --values <path-to>>/sch-values.yaml --set mysql.mysqlUser=<user>,mysql.mysqlPassword=<password>
@@ -94,6 +89,61 @@ kubectl get all -n streamsets
 
 and delete manually using `kubectl delete job <job>` where required.
 
+
+## Database deployment
+
+This chart, by default, will create a MySQL deployment for supporting SCH persistence.
+
+
+### Bring your own database example
+Configure databases as per [Documentation](https://streamsets.com/documentation/controlhub/latest/onpremhelp/controlhub/UserGuide/Install/CreatingDBs.html)
+
+If a user wishes to utilize an external database the following should be set in the over-riding values file after
+ following the documentation for creating databases
+
+```yaml
+mysql:
+  enabled: false
+  mysqlUser: myuser
+  mysqlPassword: mypass
+  mysqlHost: 192.168.122.1
+  mysqlPort: 3306
+```
+
+## TimeSeries 
+
+By default, this chart creates a deployment of InfluxDB to store time series data.
+
+If a user wishes to utilize an external time-series database the following should be set in the over-riding values file:
+
+```yaml
+schInfluxUser: myuser 
+schInfluxPassword: mypass
+influxdb:
+  enabled: false # Not using the embedded chart, using external hence false
+  proto: http
+  config:
+    http:
+      bind_host: 192.168.122.1
+      bind_address: 8086
+```
+
+## LDAP
+
+By default, SCH maintains its own store of users and groups.
+
+If a user wishes to utilize an existing LDAP deployment, the following should be set in the over-riding values file:
+
+### External LDAP example
+```yaml
+ldap:
+  enabled: true
+  host: 192.168.122.1
+  port: 389
+  userBaseDn: ou=employees,dc=streamsets,dc=net
+  bindDn: cn=admin,dc=streamsets,dc=net
+  groupBaseDn: ou=departments,dc=streamsets,dc=net
+```
 
 ## Custom Configuration Tips
 

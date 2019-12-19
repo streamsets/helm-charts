@@ -77,24 +77,32 @@ spec:
               key: mysql-root-password
         {{- end }}
         - name: DB_HOST
-        {{- if $.Values.mysqlHost }}
-          value: "{{ $.Values.mysqlHost }}"
+        {{- if $.Values.mysql.mysqlHost }}
+          value: "{{ $.Values.mysql.mysqlHost }}"
         {{- else }}
           value: "{{ template "mysql.fullname" $ }}.{{ $.Release.Namespace }}.svc.cluster.local"
         {{- end}}
         - name: DB_PORT
           value: "{{ $.Values.mysql.mysqlPort }}"
         - name: DPM_CONF_DB_URL
+        {{- if $.Values.influxdb.config.http.bind_host }}
+          value: "{{ $.Values.influxdb.proto }}://{{ $.Values.influxdb.config.http.bind_host }}:{{ $.Values.influxdb.config.http.bind_address }}"
+        {{- else }}
           value: "{{ $.Values.influxdb.proto }}://{{ template "influxdb.fullname" $ }}.{{ $.Release.Namespace }}.svc.cluster.local:{{ $.Values.influxdb.config.http.bind_address }}"
+        {{- end }}
         - name: DPM_CONF_DB_NAME
           value: "dpm"
         - name: DPM_CONF_DB_USER
           value: {{ $.Values.schInfluxUser }}
         - name: DPM_CONF_DB_PASSWORD
+        {{- if $.Values.schInfluxPassword }}
+          value: {{ $.Values.schInfluxPassword }}
+        {{- else }}
           valueFrom:
             secretKeyRef:
               name: "{{ include "control-hub.fullname" $ }}"
               key: influxdb-password
+        {{- end}}
 {{- end }}
 ---
 apiVersion: batch/v1
@@ -129,23 +137,36 @@ spec:
         image: appropriate/curl:latest
         imagePullPolicy: IfNotPresent
         args:
+          {{- if $.Values.influxdb.config.http.bind_host }}
+          - "/bin/sh"
+          - "-c"
+          - |
+             curl -v -m 10 -u"${INFLUXDB_USER}:${INFLUXDB_PASSWORD}" -X POST "{{ $.Values.influxdb.proto }}://{{ $.Values.influxdb.config.http.bind_host }}:{{ $.Values.influxdb.config.http.bind_address }}"/query \
+             --data-urlencode \
+             "q=CREATE USER \"${INFLUXDB_USER}\" WITH PASSWORD '${INFLUXDB_PASSWORD}' WITH ALL PRIVILEGES"
+          {{- else }}
           - "/bin/sh"
           - "-c"
           - |
              curl -v -m 10 -X POST {{ .Values.influxdb.proto }}://{{ template "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8086/query \
              --data-urlencode \
              "q=CREATE USER \"${INFLUXDB_USER}\" WITH PASSWORD '${INFLUXDB_PASSWORD}' WITH ALL PRIVILEGES"
+          {{- end }}
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
         env:
         - name: INFLUXDB_USER
-          value: {{ .Values.schInfluxUser }}
+          value: {{ $.Values.schInfluxUser }}
         - name: INFLUXDB_PASSWORD
+        {{- if $.Values.schInfluxPassword }}
+          value: {{ $.Values.schInfluxPassword }}
+        {{- else }}
           valueFrom:
             secretKeyRef:
-              name: {{ template "control-hub.fullname" . }}
+              name: "{{ include "control-hub.fullname" $ }}"
               key: influxdb-password
+        {{- end}}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -179,25 +200,38 @@ spec:
         image: appropriate/curl:latest
         imagePullPolicy: IfNotPresent
         args:
+          {{- if $.Values.influxdb.config.http.bind_host }}
+          - "/bin/sh"
+          - "-c"
+          - |
+             curl -v -m 10 -u"${INFLUXDB_USER}:${INFLUXDB_PASSWORD}" -X POST "{{ $.Values.influxdb.proto }}://{{ $.Values.influxdb.config.http.bind_host }}:{{ $.Values.influxdb.config.http.bind_address }}"/query \
+             --data-urlencode \
+             "q=CREATE DATABASE ${DB_NAME}"
+          {{- else }}
           - "/bin/sh"
           - "-c"
           - |
              curl -v -m 10 -u"${INFLUXDB_USER}:${INFLUXDB_PASSWORD}" -X POST {{ .Values.influxdb.proto }}://{{ template "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8086/query \
              --data-urlencode \
              "q=CREATE DATABASE ${DB_NAME}"
+          {{- end }}
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
         env:
         - name: DB_NAME
-          value: dpm
+          value: sch
         - name: INFLUXDB_USER
-          value: {{ .Values.schInfluxUser }}
+          value: {{ $.Values.schInfluxUser }}
         - name: INFLUXDB_PASSWORD
+        {{- if $.Values.schInfluxPassword }}
+          value: {{ $.Values.schInfluxPassword }}
+        {{- else }}
           valueFrom:
             secretKeyRef:
-              name: {{ template "control-hub.fullname" . }}
+              name: "{{ include "control-hub.fullname" $ }}"
               key: influxdb-password
+        {{- end}}
 
 ---
 apiVersion: batch/v1
@@ -232,25 +266,38 @@ spec:
         image: appropriate/curl:latest
         imagePullPolicy: IfNotPresent
         args:
+          {{- if $.Values.influxdb.config.http.bind_host }}
+          - "/bin/sh"
+          - "-c"
+          - |
+             curl -v -m 10 -u"${INFLUXDB_USER}:${INFLUXDB_PASSWORD}" -X POST "{{ $.Values.influxdb.proto }}://{{ $.Values.influxdb.config.http.bind_host }}:{{ $.Values.influxdb.config.http.bind_address }}"/query \
+             --data-urlencode \
+             "q=CREATE DATABASE ${DB_NAME}"
+          {{- else }}
           - "/bin/sh"
           - "-c"
           - |
              curl -v -m 10 -u"${INFLUXDB_USER}:${INFLUXDB_PASSWORD}" -X POST {{ .Values.influxdb.proto }}://{{ template "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8086/query \
              --data-urlencode \
              "q=CREATE DATABASE ${DB_NAME}"
+          {{- end }}
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
         env:
         - name: DB_NAME
-          value: dpm_app
+          value: sch_app
         - name: INFLUXDB_USER
-          value: {{ .Values.schInfluxUser }}
+          value: {{ $.Values.schInfluxUser }}
         - name: INFLUXDB_PASSWORD
+        {{- if $.Values.schInfluxPassword }}
+          value: {{ $.Values.schInfluxPassword }}
+        {{- else }}
           valueFrom:
             secretKeyRef:
-              name: {{ template "control-hub.fullname" . }}
+              name: "{{ include "control-hub.fullname" $ }}"
               key: influxdb-password
+        {{- end}}
 ---
 apiVersion: batch/v1
 kind: Job

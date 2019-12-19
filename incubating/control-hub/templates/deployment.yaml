@@ -82,34 +82,50 @@ spec:
           - name: DPM_CONF_DPM_BASE_URL
             value: "{{ $.Values.ingress.proto }}://{{ $.Values.ingress.host }}.{{ $.Values.ingress.domain }}{{ $externalPort }}"
           - name: DPM_CONF_DB_URL
+          {{- if $.Values.influxdb.config.http.bind_host }}
+            value: "{{ $.Values.influxdb.proto }}://{{ $.Values.influxdb.config.http.bind_host }}:{{ $.Values.influxdb.config.http.bind_address }}"
+          {{- else }}
             value: "{{ $.Values.influxdb.proto }}://{{ template "influxdb.fullname" $ }}.{{ $.Release.Namespace }}.svc.cluster.local:{{ $.Values.influxdb.config.http.bind_address }}"
+          {{- end }}
           - name: DPM_CONF_DB_NAME
             value: "dpm"
           - name: DPM_CONF_DB_USER
             value: {{ $.Values.schInfluxUser }}
+          {{- if $.Values.schInfluxPassword }}
+          - name: DPM_CONF_DB_PASSWORD
+            value: {{ $.Values.schInfluxPassword }}
+          {{- else }}
           - name: DPM_CONF_DB_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: "{{ include "control-hub.fullname" $ }}"
                 key: influxdb-password
+          {{- end}}
           - name: DPM_CONF_DPM_APP_DB_URL
+          {{- if $.Values.influxdb.config.http.bind_host }}
+            value: "{{ $.Values.influxdb.proto }}://{{ $.Values.influxdb.config.http.bind_host }}:{{ $.Values.influxdb.config.http.bind_address }}"
+          {{- else }}
             value: "{{ $.Values.influxdb.proto }}://{{ template "influxdb.fullname" $ }}.{{ $.Release.Namespace }}.svc.cluster.local:{{ $.Values.influxdb.config.http.bind_address }}"
+          {{- end }}
           - name: DPM_CONF_DPM_APP_DB_NAME
             value: "dpm_app"
           - name: DPM_CONF_DPM_APP_DB_USER
             value: {{ $.Values.schInfluxUser }}
           - name: DPM_CONF_DPM_APP_DB_PASSWORD
+          {{- if $.Values.schInfluxPassword}}
+            value: "{{ $.Values.schInfluxPassword }}"
+          {{- else }}
             valueFrom:
               secretKeyRef:
                 name: "{{ include "control-hub.fullname" $ }}"
                 key: influxdb-password
+          {{- end }}
           - name: DB_USER
             value: "{{ $.Values.mysql.mysqlRootUser }}"
-          {{- if $.Values.mysql.mysqlRootPassword }}
           - name: DB_PASSWORD
+          {{- if $.Values.mysql.mysqlRootPassword }}
             value: "{{ $.Values.mysql.mysqlRootPassword }}"
           {{- else }}
-          - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ template "mysql.fullname" $ }}
@@ -165,6 +181,46 @@ spec:
           {{- end }}
           - name: DPM_CONF_XMAIL_FROM_ADDRESS
             value: {{ default "no-reply@streamsets.com" $.Values.mailFromAddress }}
+          {{- if $.Values.ldap.enabled }}
+          - name: DPM_CONF_LDAP_HOSTNAME
+            value: {{ $.Values.ldap.host }}
+          - name: DPM_CONF_LDAP_PORT 
+            value: {{ $.Values.ldap.port | quote }}
+          - name: DPM_CONF_LDAP_LDAPS 
+            value: {{ $.Values.ldap.ldaps | quote }}
+          - name: DPM_CONF_LDAP_L_ldap_startTLS
+            value: {{ $.Values.ldap.startTLS | quote }}
+          - name: DPM_CONF_LDAP_L_ldap_userBaseDn
+            value: {{ $.Values.ldap.userBaseDn }}
+          - name: DPM_CONF_LDAP_L_ldap_userObjectClass
+            value: {{ $.Values.ldap.userObjectClass }}
+          - name: DPM_CONF_LDAP_L_ldap_userNameAttribute
+            value: {{ $.Values.ldap.userNameAttribute }}
+          - name: DPM_CONF_LDAP_L_ldap_userEmailAttribute
+            value: {{ $.Values.ldap.userEmailAttribute }}
+          - name: DPM_CONF_LDAP_L_ldap_userFullNameAttribute
+            value: {{ $.Values.ldap.userFullNameAttribute }}
+          - name: DPM_CONF_LDAP_L_ldap_userFilter
+            value: {{ $.Values.ldap.userFilter | quote }}
+          - name: DPM_CONF_LDAP_L_ldap_bindDn
+            value: {{ $.Values.ldap.bindDn }}
+          - name: DPM_CONF_LDAP_L_ldap_bindPassword
+            value: {{ $.Values.ldap.bindPassword | quote }}
+          - name: DPM_CONF_LDAP_L_ldap_fetchGroups
+            value: {{ $.Values.ldap.fetchGroups | quote }}
+          - name: DPM_CONF_LDAP_L_ldap_groupBaseDn
+            value: {{ $.Values.ldap.groupBaseDn }}
+          - name: DPM_CONF_LDAP_L_ldap_groupObjectClass
+            value: {{ $.Values.ldap.groupObjectClass }}
+          - name: DPM_CONF_LDAP_L_ldap_groupMemberAttribute
+            value: {{ $.Values.ldap.groupMemberAttribute }}
+          - name: DPM_CONF_LDAP_L_ldap_groupNameAttribute
+            value: {{ $.Values.ldap.groupNameAttribute }}
+          - name: DPM_CONF_LDAP_L_ldap_groupFullNameAttribute
+            value: {{ $.Values.ldap.groupFullNameAttribute }}
+          - name: DPM_CONF_LDAP_L_ldap_groupFilter
+            value: {{ $.Values.ldap.groupFilter | quote }}
+          {{- end }}
           ports:
           - name: http
             containerPort: {{ $.Values.service.port }}
