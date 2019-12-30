@@ -136,8 +136,9 @@ spec:
           weight: 100
 ```
 
-### Deploy apps in minikube with `pipelinestore` in one container and all other apps in another container
+### Deploy apps each in own pod
 
+Note the replica count can be changed to increase horizontal scaling for each app. This is experimental.
 
 ```yaml
   image:
@@ -158,51 +159,116 @@ spec:
 
   common:
     env: &COMMON_ENV
-      DPM_JAVA_OPTS: "-Xms128m -Xmx1024m"
-
-  deployments:
-  - name: one
-    appsToStart: "security,messaging,jobrunner,topology,notification,sla,policy,provisioning,scheduler,sdp_classification,reporting"
-    replicaCount: 1
-    container:
-      env:
-        <<: *COMMON_ENV
-  - name: pipelinestore
-    appsToStart: "pipelinestore"
-    replicaCount: 1
-    container:
-      env:
-        <<: *COMMON_ENV
-        DPM_JAVA_OPTS: "-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5006,suspend=n"
-
+      DPM_JAVA_OPTS: "-Xms128m -Xmx512m"
+  
   appProto: http
   apps:
-  - name: security
-    deployment: one
-  - name: pipelinestore
-    deployment: pipelinestore
-  - name: messaging
-    deployment: one
-  - name: jobrunner
-    deployment: one
-  - name: timeseries
-    deployment: one
-  - name: topology
-    deployment: one
-  - name: notification
-    deployment: one
-  - name: sla
-    deployment: one
-  - name: policy
-    deployment: one
-  - name: provisioning
-    deployment: one
-  - name: scheduler
-    deployment: one
-  - name: sdp_classification
-    deployment: one
-  - name: reporting
-    deployment: one
+    - name: security
+      deployment: security
+    - name: pipelinestore
+      deployment: pipelinestore
+    - name: messaging
+      deployment: messaging
+    - name: jobrunner
+      deployment: jobrunner
+    - name: timeseries
+      deployment: timeseries
+    - name: topology
+      deployment: topology
+    - name: notification
+      deployment: notification
+    - name: sla
+      deployment: sla
+    - name: policy
+      deployment: policy
+    - name: provisioning
+      deployment: provisioning
+    - name: scheduler
+      deployment: scheduler
+    - name: sdp_classification
+      deployment: sdp_classification
+    - name: reporting
+      deployment: reporting
+  
+  deployments:
+    - name: security
+      appsToStart: "security"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: pipelinestore
+      appsToStart: "pipelinestore"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: messaging
+      appsToStart: "messaging"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: jobrunner
+      appsToStart: "jobrunner"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: timeseries
+      appsToStart: "timeseries"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: topology
+      appsToStart: "topology"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: notification
+      appsToStart: "notification"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: sla
+      appsToStart: "sla"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: policy
+      appsToStart: "policy"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: provisioning
+      appsToStart: "provisioning"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: scheduler
+      appsToStart: "scheduler"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: sdp_classification
+      appsToStart: "sdp_classification"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
+    - name: reporting
+      appsToStart: "reporting"
+      replicaCount: 1
+      container:
+        env:
+          <<: *COMMON_ENV
 
   mysql:
     mysqlRootPassword: streamSets123

@@ -7,7 +7,6 @@ metadata:
   name: "{{ include "control-hub.fullname" $ }}-{{ $deployment.name | replace "_" "-" }}"
   labels:
     app.kubernetes.io/name: {{ $deployment.name | quote }}
-    app.kubernetes.io/component: {{ $deployment.appsToStart }}
     app.kubernetes.io/part-of: {{ include "control-hub.name" $ }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
