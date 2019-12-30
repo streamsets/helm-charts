@@ -1,9 +1,8 @@
-{{- range $app := .Values.apps }}
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ $.Release.Name}}-init-{{ $app.name | replace "_" "-" }}-db-{{ $.Values.image.tag | lower | replace "." "-" }}"
+  name: "{{ $.Release.Name}}-init-db-{{ $.Values.image.tag | lower | replace "." "-" }}"
   labels:
     helm.sh/chart: {{ include "control-hub.chart" $ }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
@@ -18,7 +17,7 @@ spec:
   backoffLimit: 5
   template:
     metadata:
-      name: "{{ $.Release.Name }}-init-{{ $app.name | replace "_" "-" }}-db"
+      name: "{{ $.Release.Name }}-init-db"
       labels:
         app.kubernetes.io/part-of: {{ include "control-hub.name" $ }}
         app.kubernetes.io/instance: {{ $.Release.Name }}
@@ -57,7 +56,8 @@ spec:
       - name: "{{ $.Values.image.pullSecret }}"
       {{- end }}
       containers:
-      - name: post-install-db-setup
+{{- range $app := .Values.apps }}
+      - name: post-install-{{ $app.name | replace "_" "-" }}-db-setup
         image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
         imagePullPolicy: {{ $.Values.image.pullPolicy }}
         args: ["dpmcli", "{{ $app.name }}", "buildSchema", "-a", "--debug"]
