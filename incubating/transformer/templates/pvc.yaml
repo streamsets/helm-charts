@@ -1,0 +1,28 @@
+{{- if .Values.persistence.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "transformer.fullname" . }}-pvc
+  labels:
+    app: {{ include "transformer.name" . }}
+    chart: {{ include "transformer.chart" . }}
+    release: {{ .Release.Name }}
+    managed-by: {{ .Release.Service }}
+  {{- if .Values.persistence.annotations }}
+  annotations:
+  {{ toYaml .Values.persistence.annotations | indent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size | quote }}
+  {{- if .Values.persistence.storageClass }}
+  {{- if (eq "-" .Values.persistence.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: "{{ .Values.persistence.storageClass }}"
+  {{- end }}
+  {{- end }}
+  {{- end }}

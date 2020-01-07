@@ -2,3 +2,5 @@
 *.tar
 **/.DS_Store
 **/mysql-*tgz
+**/ingress.crt
+**/truststore.jks

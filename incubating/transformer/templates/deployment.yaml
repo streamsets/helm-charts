@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "transformer.fullname" . }}
+  labels:
+    app: {{ include "transformer.name" . }}
+    chart: {{ include "transformer.chart" . }}
+    release: {{ .Release.Name }}
+    managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "transformer.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "transformer.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.rbac.enabled }}
+      serviceAccountName: {{ include "transformer.fullname" . }}
+      {{- else }}
+      serviceAccountName: default
+      {{- end }}
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: {{ include "transformer.fullname" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 19630
+              protocol: TCP
+          env:
+            - name: HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: dpm_conf_dpm_enabled
+              value: "{{ .Values.controlHub.enabled }}"
+            {{- if .Values.controlHub.enabled}}
+            - name: dpm_conf_dpm_base_url
+              value: {{ default "https://cloud.streamsets.com" .Values.controlHub.url }}
+            - name: dpm_conf_dpm_remote_control_job_labels
+              value: {{ default "all" .Values.controlHub.labels }}
+            - name: transformer_token_string
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "transformer.fullname" . }}
+                  key: apiToken
+            {{- end}}
+            {{- if .Values.transformer.baseHttpUrl }}
+            - name: transformer_conf_transformer_base_http_url
+              value: {{ .Values.transformer.baseHttpUrl }}
+            {{- end }}
+            - name: transformer_conf_kubernetes_ingress_service_enabled
+              value: "true"
+            - name: transformer_conf_kubernetes_namespace
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: transformer_conf_kubernetes_serviceAccountName
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+            - name: transformer_conf_kubernetes_persistent_volume_name
+              value: "streamsets-transformer-vol"
+            - name: transformer_conf_kubernetes_persistent_volume_mountPath
+              value: "/streamsets"
+            - name: transformer_conf_kubernetes_persistent_volume_claimName
+              value: {{ include "transformer.fullname" . }}-pvc
+            {{- if .Values.transformer.truststoreFile }}
+            - name: transformer_conf_https_truststore_path
+              value: "{{ .Values.transformer.truststoreFile }}"
+            - name: transformer_conf_https_truststore_password
+              value: "{{ .Values.transformer.truststorePassword }}"
+            {{- end }}
+          volumeMounts:
+            {{- if .Values.transformer.truststoreFile }}
+            - mountPath: "/ssl"
+              name: "ssl"
+            {{- end }}
+            {{- if .Values.persistence.enabled }}
+            - mountPath: "/streamsets"
+              name: streamsets-transformer-vol
+            {{- end }}
+      volumes:
+        {{- if .Values.transformer.truststoreFile }}
+        - name: ssl
+          secret:
+            secretName: {{ include "transformer.fullname" . }}-cert
+        {{- end }}
+        {{- if .Values.persistence.enabled }}
+        - name: streamsets-transformer-vol
+          persistentVolumeClaim:
+            claimName: {{ include "transformer.fullname" . }}-pvc
+        {{- end }}

@@ -1,0 +1,70 @@
+{{- if .Values.rbac.enabled }}
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: {{ include "transformer.fullname" . }}
+  labels:
+    app: {{ include "transformer.name" . }}
+    chart: {{ include "transformer.chart" . }}
+    release: {{ .Release.Name }}
+    managed-by: {{ .Release.Service }}
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "transformer.fullname" . }}
+  labels:
+    app: {{ include "transformer.name" . }}
+    chart: {{ include "transformer.chart" . }}
+    release: {{ .Release.Name }}
+    managed-by: {{ .Release.Service }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - secrets
+      - configmaps
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+      - patch
+  - apiGroups:
+      - extensions
+    resources:
+      - replicasets
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: {{ include "transformer.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "transformer.name" . }}
+    chart: {{ include "transformer.chart" . }}
+    release: {{ .Release.Name }}
+    managed-by: {{ .Release.Service }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "transformer.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "transformer.fullname" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

@@ -1,0 +1,21 @@
+{{- if .Values.transformer.baseHttpUrl }}
+
+StreamSets Transformer will be available at the following URL:
+
+     - {{ .Values.transformer.baseHttpUrl }}
+
+{{- end }}
+
+NOTE: It may take a few minutes for this to become available.
+
+     You can watch the status by running:
+
+        $ kubectl get pods -l app={{ template "transformer.fullname" . }} -w
+
+
+{{- if .Values.controlHub.enabled }}
+
+Also, StreamSets Transformer registered with StreamSets Control Hub  - {{ .Values.controlHub.url }}
+
+{{- end }}
+

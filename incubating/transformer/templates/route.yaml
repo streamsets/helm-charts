@@ -1,0 +1,18 @@
+{{- if .Values.route.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "transformer.fullname" . }}
+  labels:
+    app: {{ include "transformer.name" . }}
+    chart: {{ include "transformer.chart" . }}
+    release: {{ .Release.Name }}
+    managed-by: {{ .Release.Service }}
+spec:
+  to:
+    kind: Service
+    name: {{ include "transformer.fullname" . }}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
+{{- end }}
