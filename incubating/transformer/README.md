@@ -70,7 +70,7 @@ Alternatively, a YAML file that specifies the values for the parameters can be p
 installing the chart. For example:
 
 ```bash
-helm install streamsets/control-agent --values values.yaml
+helm install transformer streamsets-incubating/transformer --values values.yaml
 ```
 
 #### Deleting
@@ -174,7 +174,7 @@ external_ip=$(kubectl describe svc traefik | grep Ingress | awk '{print $3}')
 # Extract certificate from Traefik Ingress IP
 echo | openssl s_client -connect ${external_ip}:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ingress.crt
 
-# Import Minikube Ingress HTTPs certificate in to the truststore.jks
+# Import Ingress HTTPs certificate in to the truststore.jks
 keytool -import -file ingress.crt -trustcacerts -noprompt -alias IngressCA -storepass password -keystore truststore.jks
 
 # Copy the CA certs from jre/lib/security/cacerts to etc/truststore.jks

@@ -16,9 +16,9 @@ controlHub:
   labels: all
 
 transformer:
-  ## External URL for Transformer, value for configuration "transformer.base.http.url" in transformer.properties>
+  ## External URL for Transformer, value for configuration "transformer.base.http.url" in transformer.properties
   baseHttpUrl: ""
-  ## Java truststore file & password which stores certificates to trust identity of transformer launcher>
+  ## Java truststore file & password which stores certificates to trust identity of transformer launcher
   truststoreFile: ""
   truststorePassword: "password"
 
