@@ -35,4 +35,24 @@ entries:
     urls:
     - https://streamsets.github.io/helm-charts/incubating/control-hub-0.4.7.tgz
     version: 0.4.7
-generated: "2019-07-02T14:29:55.869766-07:00"
+  transformer:
+  - apiVersion: v1
+    appVersion: 3.13.0
+    created: "2020-01-07T16:14:48.003863-08:00"
+    description: StreamSets Transformer
+    digest: 58fe8ce79097c3bae75f26c395d84e85c6c3bafca82e947efd3d17ee9184c47b
+    home: https://streamsets.com
+    icon: https://streamsets.com/wp-content/uploads/2016/08/StreamSets-logo-small.png
+    keywords:
+    - streamsets
+    - transformer
+    maintainers:
+    - email: madhu@streamsets.com
+      name: madhu
+    name: transformer
+    sources:
+    - https://github.com/streamsets/helm-charts/tree/master/incubating/transformer
+    urls:
+    - https://streamsets.github.io/helm-charts/incubating/transformer-0.0.1.tgz
+    version: 0.0.1
+generated: "2020-01-07T16:14:47.99136-08:00"

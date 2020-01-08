@@ -22,13 +22,13 @@ This chart supports both RBAC and non-RBAC enabled clusters. It has no dependenc
 First, add the StreamSets incubating repository to helm.
 
 ```bash
-helm repo add streamsets https://streamsets.github.io/helm-charts/incubating
+helm repo add streamsets-incubating https://streamsets.github.io/helm-charts/incubating
 ```
 
-To install the chart with the release name `my-release` into the namespace `streamsets`:
+To install the chart into the namespace `streamsets`:
 
 ```bash
-helm install streamsets/transformer --name my-release --namespace streamsets
+helm install transformer streamsets-incubating/transformer --namespace streamsets
 ```
 
 ## Configuration
@@ -61,7 +61,7 @@ The following tables lists the configurable parameters of the chart and their de
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
 
 ```bash
-helm install transformer streamsets/transformer \
+helm install transformer streamsets-incubating/transformer \
     --set ingress.enabled=true \
     --set transformer.baseHttpUrl=https://192.168.64.58
 ```
@@ -93,7 +93,7 @@ Manually delete all Transformer Spark Driver pods using `kubectl delete pod --fi
 ### Deploying StreamSets Transformer in minikube
 
 ```bash
-helm install transformer ./transformer \
+helm install transformer streamsets-incubating/transformer \
     --set ingress.enabled=true \
     --set transformer.baseHttpUrl=https://$(minikube ip)
 ```
@@ -101,11 +101,11 @@ helm install transformer ./transformer \
 
 ### Deploying StreamSets Transformer in minikube with Control Hub enabled
 
-Regenerate StreamSets Transformer auth token from URL - https://cloud.streamsets.com/sch/security/transformers
+Generate StreamSets Transformer auth token from URL - https://cloud.streamsets.com/sch/security/transformers
 
 ```bash
 token = <Transformer auth token from the Control Hub REST API or UI>
-helm install transformer ./transformer \
+helm install transformer streamsets-incubating/transformer \
     --set controlHub.enabled=true \
     --set controlHub.url=https://cloud.streamsets.com \
     --set controlHub.token=${token} \
@@ -125,7 +125,7 @@ oc login -u system:admin
 oc adm policy add-scc-to-user anyuid -z transformer
 oc adm policy add-scc-to-group hostmount-anyuid system:serviceaccounts
 oc login -u developer
-helm install transformer ./transformer \
+helm install transformer streamsets-incubating/transformer \
     --set route.enabled=true \
     --set transformer.baseHttpUrl=https://transformer-myproject.$(minishift ip).nip.io
 ```
@@ -146,7 +146,7 @@ oc adm policy add-scc-to-user anyuid -z transformer
 oc adm policy add-scc-to-group hostmount-anyuid system:serviceaccounts
 oc login -u developer
 token = <Transformer auth token from the Control Hub REST API or UI>
-helm install transformer ./transformer \
+helm install transformer streamsets-incubating/transformer \
     --set controlHub.enabled=true \
     --set controlHub.url=https://cloud.streamsets.com \
     --set controlHub.token=${token} \
@@ -180,7 +180,7 @@ keytool -import -file ingress.crt -trustcacerts -noprompt -alias IngressCA -stor
 # Copy the CA certs from jre/lib/security/cacerts to etc/truststore.jks
 keytool -importkeystore -srckeystore "$JAVA_HOME"/jre/lib/security/cacerts -srcstorepass changeit -destkeystore truststore.jks -deststorepass password
 
-helm install transformer ./transformer \
+helm install transformer streamsets-incubating/transformer \
     --set ingress.enabled=true \
     --set ingress.annotations."kubernetes\.io/ingress\.class"=traefik \
     --set transformer.baseHttpUrl=https://${external_ip} \
