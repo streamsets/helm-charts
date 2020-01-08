@@ -116,7 +116,7 @@ helm install transformer streamsets-incubating/transformer \
 
 ### Deploying StreamSets Transformer in minishift
 
-Route URL format - https://<Service Name>-<Project/Namespace Name>.$(minishift ip).nip.io
+Route URL format - https:// <Service Name>-<Project/Namespace Name>.$(minishift ip).nip.io
 e.g: https://transformer-myproject.192.168.64.59.nip.io
 
 ```bash
@@ -133,7 +133,7 @@ helm install transformer streamsets-incubating/transformer \
 
 ### Deploying StreamSets Transformer in minishift with Control Hub enabled
 
-Regenerate StreamSets Transformer auth token from URL - https://cloud.streamsets.com/sch/security/transformers
+Generate StreamSets Transformer auth token from URL - https://cloud.streamsets.com/sch/security/transformers
 
 Route URL format - https://<Service Name>-<Project/Namespace Name>.$(minishift ip).nip.io
 e.g: https://transformer-myproject.192.168.64.59.nip.io
@@ -156,7 +156,14 @@ helm install transformer streamsets-incubating/transformer \
 
 ### Deploying StreamSets Transformer in Azure Kubernetes Service (AKS)
 
-Install Traefik load balancer
+Creating AKS cluster
+
+```bash
+az login
+az aks create --name kubcluster-transformer --resource-group transformerResourceGroup
+```
+
+Install Traefik load balancer & StreamSets Transformer
 
 ```bash
 ## Install Traefik load balancer
@@ -182,8 +189,8 @@ keytool -importkeystore -srckeystore "$JAVA_HOME"/jre/lib/security/cacerts -srcs
 
 helm install transformer streamsets-incubating/transformer \
     --set ingress.enabled=true \
-    --set ingress.annotations."kubernetes\.io/ingress\.class"=traefik \
+    --set ingress.annotations."kubernetes\.io/ingress\.class"="traefik" \
     --set transformer.baseHttpUrl=https://${external_ip} \
-    --set-file transformer.truststoreFile=truststore.jks \
+    --set transformer.truststoreFile=truststore.jks \
     --set transformer.truststorePassword=password
 ```
