@@ -47,6 +47,7 @@ The following tables lists the configurable parameters of the chart and their de
 | `controlHub.labels`             | Labels for this Transformer to report the Control Hub                | `all`                                     |
 |                                 |                                                                      |                                           |
 | `ingress.enabled`               | Ingress Enabled                                                      | `false`                                   |
+| `ingress.path`                  | Ingress path                                                         | `\`                                       |
 |                                 |                                                                      |                                           |
 | `transformer.baseHttpUrl`       | Value for configuration "transformer.base.http.url"                  | None                                      |
 | `transformer.truststoreFile`    | Transformer Java truststore file which stores certificates           | None                                      |
@@ -98,6 +99,14 @@ helm install transformer streamsets-incubating/transformer \
     --set transformer.baseHttpUrl=https://$(minikube ip)
 ```
 
+For custom path-based routes (https://192.168.64.69/transformer)
+
+```bash
+helm install transformer streamsets-incubating/transformer \
+    --set ingress.enabled=true \
+    --set ingress.path=/transformer \
+    --set transformer.baseHttpUrl=https://$(minikube ip)/transformer/
+```
 
 ### Deploying StreamSets Transformer in minikube with Control Hub enabled
 

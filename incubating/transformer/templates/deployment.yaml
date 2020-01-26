@@ -54,6 +54,8 @@ spec:
             - name: transformer_conf_transformer_base_http_url
               value: {{ .Values.transformer.baseHttpUrl }}
             {{- end }}
+            - name: transformer_conf_http.enable.forwarded.requests
+              value: "true"
             - name: transformer_conf_kubernetes_ingress_service_enabled
               value: "true"
             - name: transformer_conf_kubernetes_namespace

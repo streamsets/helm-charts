@@ -9,6 +9,9 @@ metadata:
     release: {{ .Release.Name }}
     managed-by: {{ .Release.Service }}
   annotations:
+    {{- if (ne "/" .Values.ingress.path) }}
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    {{- end }}
     {{- range $key, $value := .Values.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
@@ -21,7 +24,11 @@ spec:
     {{- end }}
       http:
         paths:
+          {{- if (eq "/" .Values.ingress.path) }}
           - path: /
+          {{- else }}
+          - path: {{ .Values.ingress.path }}(/|$)(.*)
+          {{- end }}
             backend:
               serviceName: {{ include "transformer.fullname" . }}
               servicePort: 19635
