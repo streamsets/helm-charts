@@ -6,7 +6,6 @@ entries:
     created: "2019-07-02T14:29:55.876112-07:00"
     description: A Helm chart for StreamSets Control Hub (SCH)
     digest: 4eccca9e5e15cf4a5ee0338dddf13a63d9deea559f04662ed59cd3c4b01d2f1f
-    engine: gotpl
     home: https://streamsets.com
     icon: https://github.com/streamsets/datacollector/raw/master/basic-lib/src/main/resources/sdcipc.png
     maintainers:
@@ -23,7 +22,6 @@ entries:
     created: "2019-07-02T14:29:55.872474-07:00"
     description: A Helm chart for StreamSets Control Hub (SCH)
     digest: 5974bcb6fe48eca1bb7aedeac359001dc70d4bf2cd55116456a0bd78c3731f95
-    engine: gotpl
     home: https://streamsets.com
     icon: https://github.com/streamsets/datacollector/raw/master/basic-lib/src/main/resources/sdcipc.png
     maintainers:
@@ -38,9 +36,9 @@ entries:
   transformer:
   - apiVersion: v1
     appVersion: 3.13.0
-    created: "2020-01-26T09:02:52.612109-08:00"
+    created: "2020-02-05T13:25:43.257326-08:00"
     description: StreamSets Transformer
-    digest: 58fe8ce79097c3bae75f26c395d84e85c6c3bafca82e947efd3d17ee9184c47b
+    digest: 10746a3979eb7d30d022b78789dbb8ca658d6d0a4a6de7d5dfe2a6ad67df37c0
     home: https://streamsets.com
     icon: https://streamsets.com/wp-content/uploads/2016/08/StreamSets-logo-small.png
     keywords:
@@ -55,4 +53,4 @@ entries:
     urls:
     - https://streamsets.github.io/helm-charts/incubating/transformer-0.0.1.tgz
     version: 0.0.1
-generated: "2020-01-26T09:02:52.597261-08:00"
+generated: "2020-02-05T13:25:43.247532-08:00"

@@ -79,6 +79,8 @@ spec:
               value: "{{ .Values.transformer.truststorePassword }}"
             {{- end }}
           volumeMounts:
+            - mountPath: /data
+              name: data-volume
             {{- if .Values.transformer.truststoreFile }}
             - mountPath: "/ssl"
               name: "ssl"
@@ -88,6 +90,8 @@ spec:
               name: streamsets-transformer-vol
             {{- end }}
       volumes:
+        - name: data-volume
+          emptyDir: {}
         {{- if .Values.transformer.truststoreFile }}
         - name: ssl
           secret:
