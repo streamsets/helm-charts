@@ -1,7 +1,7 @@
 # Default values for StreamSets Transformer
 image:
   repository: streamsets/transformer
-  tag: 3.13.0-SNAPSHOT
+  tag: 3.13.0
   pullPolicy: Always
 
 rbac:

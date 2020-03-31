@@ -8,6 +8,14 @@ create data processing pipelines that execute on Spark.
 StreamSets Transformer enables users to solve their core business problems without a deep technical understanding
 of Apache Spark.
 
+Run StreamSets Transformer as Cloud Native application in Kubernetes Cluster (Using Helm Charts). 
+
+The StreamSets Transformer application running inside the Kubernetes cluster can launch transformer pipeline jobs 
+outside the k8s cluster like Databricks Cluster, EMR Cluster, or Azure HDInsights. 
+
+And also, we can run a StreamSets Transformer pipeline using the k8s cluster (Spark on k8s) without any additional spark 
+installation support.
+
 
 ## Incubating Status
 
@@ -38,8 +46,8 @@ The following tables lists the configurable parameters of the chart and their de
 | Parameter                       | Description                                                          | Default                                   |
 | ------------------------------- | -------------------------------------------------------------------- | ----------------------------------------- |
 | `image.repository`              | StreamSets Transformer image name                                    | `streamsets/transformer`                  |
-| `image.tag`                     | The version of the official image to use                             | `3.13.0-SNASPHOT`                         |
-| `image.pullPolicy`              | Pull policy for the image                                            | `IfNotPresent`                            |
+| `image.tag`                     | The version of the official image to use                             | `3.13.0`                         |
+| `image.pullPolicy`              | Pull policy for the image                                            | `Always`                            |
 |                                 |                                                                      |                                           |
 | `controlHub.enabled`            | Control Hub Enabled                                                  | `false`                                   |
 | `controlHub.url`                | The URL for the StreamSets Control Hub instance to connect to        | `https://cloud.streamsets.com`            |

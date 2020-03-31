@@ -10,7 +10,7 @@ NOTE: It may take a few minutes for this to become available.
 
      You can watch the status by running:
 
-        $ kubectl get pods -l app={{ template "transformer.name" . }} -w
+        $ kubectl --namespace {{.Release.Namespace}} get pods -l app={{ template "transformer.name" . }} -w
 
 
 {{- if .Values.controlHub.enabled }}
