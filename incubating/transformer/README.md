@@ -8,12 +8,12 @@ create data processing pipelines that execute on Spark.
 StreamSets Transformer enables users to solve their core business problems without a deep technical understanding
 of Apache Spark.
 
-Run StreamSets Transformer as Cloud Native application in Kubernetes Cluster (Using Helm Charts). 
+Run StreamSets Transformer as Cloud Native application in Kubernetes Cluster (Using Helm Charts).
 
-The StreamSets Transformer application running inside the Kubernetes cluster can launch transformer pipeline jobs 
-outside the k8s cluster like Databricks Cluster, EMR Cluster, or Azure HDInsights. 
+The StreamSets Transformer application running inside the Kubernetes cluster can launch transformer pipeline jobs
+outside the k8s cluster like Databricks Cluster, EMR Cluster, or Azure HDInsights.
 
-And also, we can run a StreamSets Transformer pipeline using the k8s cluster (Spark on k8s) without any additional spark 
+And also, we can run a StreamSets Transformer pipeline using the k8s cluster (Spark on k8s) without any additional spark
 installation support.
 
 
