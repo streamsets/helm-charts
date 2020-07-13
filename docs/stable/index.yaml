@@ -3,10 +3,9 @@ entries:
   control-agent:
   - apiVersion: v1
     appVersion: 3.8.0
-    created: 2019-02-04T11:30:15.223352-08:00
+    created: "2020-07-12T19:08:58.918851-07:00"
     description: Control Agent for managing StreamSets Control Hub Deployments
-    digest: 9dc08f7f35df4ad7614dd89fecd708fbdf608ea900d5cd60b6c0703b8134becc
-    engine: gotpl
+    digest: 2e7c223bda359bc419198069c8d940ea34276f718706e5a73fb527b9cfe59513
     home: https://streamsets.com
     icon: https://streamsets.com/wp-content/uploads/2016/08/StreamSets-logo-small.png
     keywords:
@@ -20,15 +19,34 @@ entries:
     sources:
     - https://github.com/streamsets/helm-charts/tree/master/incubating/control-agent
     urls:
-    - https://streamsets.github.io/helm-charts/stable/control-agent-2.0.0.tgz
+    - control-agent-2.0.1.tgz
+    version: 2.0.1
+  - apiVersion: v1
+    appVersion: 3.8.0
+    created: "2020-07-12T19:08:58.918359-07:00"
+    description: Control Agent for managing StreamSets Control Hub Deployments
+    digest: 9dc08f7f35df4ad7614dd89fecd708fbdf608ea900d5cd60b6c0703b8134becc
+    home: https://streamsets.com
+    icon: https://streamsets.com/wp-content/uploads/2016/08/StreamSets-logo-small.png
+    keywords:
+    - streamsets
+    - sdc
+    - sch
+    maintainers:
+    - email: adam@streamsets.com
+      name: kunickiaj
+    name: control-agent
+    sources:
+    - https://github.com/streamsets/helm-charts/tree/master/incubating/control-agent
+    urls:
+    - control-agent-2.0.0.tgz
     version: 2.0.0
   streamsets-control-agent:
   - apiVersion: v1
     appVersion: 3.1.0
-    created: 2019-02-04T11:30:15.225437-08:00
+    created: "2020-07-12T19:08:58.919543-07:00"
     description: Control Agent for managing StreamSets Control Hub Deployments
     digest: 2a5bc37ed64c304fe419b29bfa093306855c1a7740e8b5feb914cf8a5877c83e
-    engine: gotpl
     home: https://streamsets.com
     icon: https://streamsets.com/wp-content/uploads/2016/08/StreamSets-logo-small.png
     keywords:
@@ -42,14 +60,13 @@ entries:
     sources:
     - https://hub.docker.com/r/streamsets/control-agent/
     urls:
-    - https://streamsets.github.io/helm-charts/stable/streamsets-control-agent-1.0.1.tgz
+    - streamsets-control-agent-1.0.1.tgz
     version: 1.0.1
   - apiVersion: v1
     appVersion: 3.1.0
-    created: 2019-02-04T11:30:15.224429-08:00
+    created: "2020-07-12T19:08:58.919202-07:00"
     description: Control Agent for managing StreamSets Control Hub Deployments
     digest: 11a25056949e1f9b943c382a97168ac582350fe7d4a7b730e02d6b9859c2db1a
-    engine: gotpl
     home: https://streamsets.com
     icon: https://streamsets.com/wp-content/uploads/2016/08/StreamSets-logo-small.png
     keywords:
@@ -63,6 +80,6 @@ entries:
     sources:
     - https://hub.docker.com/r/streamsets/control-agent/
     urls:
-    - https://streamsets.github.io/helm-charts/stable/streamsets-control-agent-1.0.0.tgz
+    - streamsets-control-agent-1.0.0.tgz
     version: 1.0.0
-generated: 2019-02-04T11:30:15.222649-08:00
+generated: "2020-07-12T19:08:58.917721-07:00"
