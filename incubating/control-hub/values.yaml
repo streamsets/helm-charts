@@ -1,8 +1,8 @@
 # Default values for Control Hub
 image:
   repository: streamsets/control-hub
-  tag: 3.13.0
-  pullPolicy: IfNotPresent
+  tag: 3.17.2
+  pullPolicy: IfNotPresent  # set this to Never if you wan't to use a locally built image
   pullSecret:  # set to a secret name containing any necessary private registry credentials
   dev: false   # set to true if deploying developer builds rather than production builds
 service:
@@ -16,7 +16,7 @@ ingress:
   domain: example.com
   host: streamsets
   annotations:
-    # kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
     # ingress.kubernetes.io/rewrite-target: /
     # kubernetes.io/ingress.allow-http: "true"
@@ -28,7 +28,7 @@ istio:
   mTLS: PERMISSIVE
 
 systemDataCollector:
-  enabled: true
+  enabled: false
   image:
     repository: streamsets/datacollector
     tag: latest
@@ -48,11 +48,11 @@ nodeSelector: {}
 ##
 common:
   env: &COMMON_ENV
-    DPM_JAVA_OPTS: "-Xms128m -Xmx512m"
+    DPM_JAVA_OPTS: "-Xms1g -Xmx2g"
 
 deployments:
   - name: aio
-    appsToStart: "security,messaging,jobrunner,topology,notification,sla,policy,pipelinestore,provisioning,scheduler,sdp_classification,reporting"
+    appsToStart: "security,messaging,jobrunner,topology,notification,sla,policy,pipelinestore,provisioning,scheduler,sdp_classification,reporting,timeseries"
     replicaCount: 1
     container:
       env:
@@ -87,21 +87,21 @@ apps:
   - name: reporting
     deployment: aio
 
-adminPassword:  # default is random password
+adminPassword:  # default is random password, for scaling and upgrades to work, this must be set explicitly
 schInfluxUser: streamsets
-schInfluxPassword:  # default is random password
+schInfluxPassword:  # default is random password, for scaling and upgrades to work, this must be set explicitly
 
 ##
 ## MySQL chart configuration
 ##
 mysql:
-  enabled: true
-  mysqlHost:  # default is svc.cluster.local
+  enabled: true  # set to false if bringing your own database
+  mysqlHost:  # default is <release-name>-mysql.svc.cluster.local
   mysqlPort: 3306
   mysqlRootUser: root
-  mysqlRootPassword:  # default is random password -- you cannot currently scale when using random
+  mysqlRootPassword:  # default is random password, for scaling and upgrades to work, this must be set explicitly
   mysqlUser: streamsets
-  mysqlPassword:  # default is random password
+  mysqlPassword:  # default is random password, for scaling and upgrades to work, this must be set explicitly
   persistence:
     enabled: true
     # storageClass: "-"

@@ -1,9 +1,9 @@
-{{- if (.Values.ingress.enabled) and not .Values.ingress.istio -}}
+{{- if .Values.ingress.enabled -}}
 {{- $serviceName := include "control-hub.fullname" . -}}
 {{- $servicePort := .Values.service.port -}}
 {{- $adminPort := .Values.service.adminPort -}}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ include "control-hub.fullname" . }}

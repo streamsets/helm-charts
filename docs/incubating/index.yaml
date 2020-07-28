@@ -2,8 +2,34 @@ apiVersion: v1
 entries:
   control-hub:
   - apiVersion: v1
+    appVersion: 3.17.2
+    created: "2020-08-13T08:37:21.72624-07:00"
+    dependencies:
+    - condition: mysql.enabled
+      name: mysql
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 1.6.6
+    description: A Helm chart for StreamSets Control Hub (SCH).
+    digest: 758e5ce2f64c5f77f8fe47eabcc4d3e9d540bebaf9a747cc48fcd6031ad1895f
+    home: https://streamsets.com
+    icon: https://github.com/streamsets/datacollector/raw/master/basic-lib/src/main/resources/sdcipc.png
+    maintainers:
+    - email: adam@streamsets.com
+      name: kunickiaj
+    name: control-hub
+    sources:
+    - https://github.com/streamsets/helm-charts/tree/master/control-hub
+    urls:
+    - control-hub-0.7.0.tgz
+    version: 0.7.0
+  - apiVersion: v1
     appVersion: 3.9.0
-    created: "2019-07-02T14:29:55.876112-07:00"
+    created: "2020-08-13T08:37:21.720866-07:00"
+    dependencies:
+    - condition: mysql.enabled
+      name: mysql
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 0.10.1
     description: A Helm chart for StreamSets Control Hub (SCH)
     digest: 4eccca9e5e15cf4a5ee0338dddf13a63d9deea559f04662ed59cd3c4b01d2f1f
     home: https://streamsets.com
@@ -15,11 +41,16 @@ entries:
     sources:
     - https://github.com/streamsets/helm-charts/tree/master/control-hub
     urls:
-    - https://streamsets.github.io/helm-charts/incubating/control-hub-0.6.0.tgz
+    - control-hub-0.6.0.tgz
     version: 0.6.0
   - apiVersion: v1
     appVersion: 3.8.0-SNAPSHOT
-    created: "2019-07-02T14:29:55.872474-07:00"
+    created: "2020-08-13T08:37:21.716701-07:00"
+    dependencies:
+    - condition: mysql.enabled
+      name: mysql
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 0.10.1
     description: A Helm chart for StreamSets Control Hub (SCH)
     digest: 5974bcb6fe48eca1bb7aedeac359001dc70d4bf2cd55116456a0bd78c3731f95
     home: https://streamsets.com
@@ -31,12 +62,12 @@ entries:
     sources:
     - https://github.com/streamsets/helm-charts/tree/master/control-hub
     urls:
-    - https://streamsets.github.io/helm-charts/incubating/control-hub-0.4.7.tgz
+    - control-hub-0.4.7.tgz
     version: 0.4.7
   transformer:
   - apiVersion: v1
     appVersion: 3.13.0
-    created: "2020-08-07T16:42:57.39325-07:00"
+    created: "2020-08-13T08:37:21.726781-07:00"
     description: StreamSets Transformer
     digest: 56888fbee26c5d211077af4ea18aa79c8e534ce6e390e09782eb1c5f0fcb3788
     home: https://streamsets.com
@@ -51,6 +82,6 @@ entries:
     sources:
     - https://github.com/streamsets/helm-charts/tree/master/incubating/transformer
     urls:
-    - https://streamsets.github.io/helm-charts/incubating/transformer-0.0.2.tgz
+    - transformer-0.0.2.tgz
     version: 0.0.2
-generated: "2020-08-07T16:42:57.384267-07:00"
+generated: "2020-08-13T08:37:21.710344-07:00"
