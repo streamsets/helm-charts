@@ -1,6 +1,6 @@
   # control-hub/requirements.yaml
 dependencies:
   - name: mysql
-    version: 0.10.1
+    version: 1.6.6
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: mysql.enabled

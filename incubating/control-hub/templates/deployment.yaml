@@ -184,9 +184,9 @@ spec:
           {{- if $.Values.ldap.enabled }}
           - name: DPM_CONF_LDAP_HOSTNAME
             value: {{ $.Values.ldap.host }}
-          - name: DPM_CONF_LDAP_PORT 
+          - name: DPM_CONF_LDAP_PORT
             value: {{ $.Values.ldap.port | quote }}
-          - name: DPM_CONF_LDAP_LDAPS 
+          - name: DPM_CONF_LDAP_LDAPS
             value: {{ $.Values.ldap.ldaps | quote }}
           - name: DPM_CONF_LDAP_L_ldap_startTLS
             value: {{ $.Values.ldap.startTLS | quote }}
