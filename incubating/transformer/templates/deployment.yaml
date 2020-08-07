@@ -33,6 +33,10 @@ spec:
             - containerPort: 19630
               protocol: TCP
           env:
+            {{- range $key, $val := .Values.transformer.env }}
+            - name: {{ $key }}
+              value: "{{ $val }}"
+            {{- end }}
             - name: HOST
               valueFrom:
                 fieldRef:

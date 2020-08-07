@@ -1,7 +1,7 @@
 # Default values for StreamSets Transformer
 image:
   repository: streamsets/transformer
-  tag: 3.13.0
+  tag: latest
   pullPolicy: Always
 
 rbac:
@@ -21,6 +21,7 @@ transformer:
   ## Java truststore file & password which stores certificates to trust identity of transformer launcher
   truststoreFile: ""
   truststorePassword: "password"
+  env: {}
 
 ingress:
   enabled: false

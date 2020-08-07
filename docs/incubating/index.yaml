@@ -36,9 +36,9 @@ entries:
   transformer:
   - apiVersion: v1
     appVersion: 3.13.0
-    created: "2020-03-31T15:56:49.004925-07:00"
+    created: "2020-08-07T16:42:57.39325-07:00"
     description: StreamSets Transformer
-    digest: 10746a3979eb7d30d022b78789dbb8ca658d6d0a4a6de7d5dfe2a6ad67df37c0
+    digest: 56888fbee26c5d211077af4ea18aa79c8e534ce6e390e09782eb1c5f0fcb3788
     home: https://streamsets.com
     icon: https://streamsets.com/wp-content/uploads/2016/08/StreamSets-logo-small.png
     keywords:
@@ -51,6 +51,6 @@ entries:
     sources:
     - https://github.com/streamsets/helm-charts/tree/master/incubating/transformer
     urls:
-    - https://streamsets.github.io/helm-charts/incubating/transformer-0.0.1.tgz
-    version: 0.0.1
-generated: "2020-03-31T15:56:48.989416-07:00"
+    - https://streamsets.github.io/helm-charts/incubating/transformer-0.0.2.tgz
+    version: 0.0.2
+generated: "2020-08-07T16:42:57.384267-07:00"
