@@ -63,6 +63,9 @@ spec:
         args: ["dpmcli", "{{ $app.name }}", "buildSchema", "-a", "--debug"]
         securityContext:
           runAsNonRoot: true
+          runAsUser: {{ $.Values.security.asUser }}
+          fsGroup: {{ $.Values.security.fsGroup }}
+
         env:
         - name: DB_USER
           value: "{{ $.Values.mysql.mysqlRootUser }}"
@@ -154,7 +157,9 @@ spec:
           {{- end }}
         securityContext:
           runAsNonRoot: true
-          runAsUser: 1000
+          #runAsUser: 1000
+          runAsUser: {{ $.Values.security.asUser }}
+          fsGroup: {{ $.Values.security.fsGroup }}
         env:
         - name: INFLUXDB_USER
           value: {{ $.Values.schInfluxUser }}
@@ -217,7 +222,9 @@ spec:
           {{- end }}
         securityContext:
           runAsNonRoot: true
-          runAsUser: 1000
+          #runAsUser: 1000
+          runAsUser: {{ $.Values.security.asUser }}
+          fsGroup: {{ $.Values.security.fsGroup }}
         env:
         - name: DB_NAME
           value: sch
@@ -283,7 +290,9 @@ spec:
           {{- end }}
         securityContext:
           runAsNonRoot: true
-          runAsUser: 1000
+          #runAsUser: 1000
+          runAsUser: {{ $.Values.security.asUser }}
+          fsGroup: {{ $.Values.security.fsGroup }}
         env:
         - name: DB_NAME
           value: sch_app
@@ -366,7 +375,9 @@ spec:
         {{- end }}
         securityContext:
           runAsNonRoot: true
-          runAsUser: 1000
+          #runAsUser: 1000
+          runAsUser: {{ $.Values.security.asUser }}
+          fsGroup: {{ $.Values.security.fsGroup }}
         env:
         - name: DPM_CONF_APPS_TO_START
           value: "security"
